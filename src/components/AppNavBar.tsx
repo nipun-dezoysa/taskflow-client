@@ -44,7 +44,7 @@ function Header() {
           />
           <NavbarBrand>
             <Link href="/" className="font-bold text-3xl text-black">
-              Task Flow
+              TaskFlow
             </Link>
           </NavbarBrand>
         </NavbarContent>

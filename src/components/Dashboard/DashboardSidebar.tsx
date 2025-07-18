@@ -1,0 +1,173 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Button, Divider, Card, CardBody } from "@heroui/react";
+import {
+  AiOutlineHome,
+  AiOutlineCheckSquare,
+  AiOutlinePlus,
+  AiOutlineTeam,
+  AiOutlineUserSwitch,
+  AiOutlineBarChart,
+  AiOutlineClose,
+  AiOutlineSetting,
+  AiOutlineLogout,
+} from "react-icons/ai";
+import { BiPlus } from "react-icons/bi";
+
+interface DashboardSidebarProps {
+  userRole: "employee" | "manager";
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const iconMap = {
+  Home: AiOutlineHome,
+  CheckSquare: AiOutlineCheckSquare,
+  Plus: AiOutlinePlus,
+  Users: AiOutlineTeam,
+  UserCog: AiOutlineUserSwitch,
+  BarChart: AiOutlineBarChart,
+};
+
+export default function DashboardSidebar({
+  userRole,
+  isOpen,
+  onClose,
+}: DashboardSidebarProps) {
+  const pathname = usePathname();
+
+  const commonMenuItems = [
+    { href: "/dashboard", label: "Overview", icon: "Home" },
+    { href: "/dashboard/tasks", label: "My Tasks", icon: "CheckSquare" },
+  ];
+
+  const managerOnlyItems = [
+    { href: "/dashboard/team-tasks", label: "Team Tasks", icon: "Users" },
+    {
+      href: "/dashboard/employees",
+      label: "Manage Employees",
+      icon: "UserCog",
+    },
+  ];
+
+  const menuItems =
+    userRole === "manager"
+      ? [...commonMenuItems, ...managerOnlyItems]
+      : commonMenuItems;
+
+  return (
+    <>
+      {/* Backdrop for mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 backdrop-blur-xs z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed lg:static inset-y-0 left-0 z-50
+          w-64 bg-white shadow-lg
+          transform transition-transform duration-300 ease-in-out
+          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        `}
+      >
+        <Card className="h-full rounded-none shadow-none">
+          <CardBody className="p-0">
+            {/* Header */}
+            <div className="p-6">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {userRole === "manager"
+                    ? "Manager Dashboard"
+                    : "Employee Dashboard"}
+                </h2>
+                <Button
+                  isIconOnly
+                  variant="light"
+                  className="lg:hidden"
+                  onPress={onClose}
+                >
+                  <AiOutlineClose className="w-5 h-5" />
+                </Button>
+              </div>
+            </div>
+            <div className="px-4">
+              <Button
+                className="w-full justify-start h-12 px-4"
+                color="primary"
+                startContent={<BiPlus className="w-5 h-5" />}
+              >
+                Create Task
+              </Button>
+            </div>
+            {/* Navigation */}
+            <nav className="flex-1 p-4">
+              <div className="space-y-1">
+                {menuItems.map((item) => {
+                  const IconComponent =
+                    iconMap[item.icon as keyof typeof iconMap];
+                  const isActive = pathname === item.href;
+
+                  return (
+                    <Button
+                      key={item.href}
+                      as={Link}
+                      href={item.href}
+                      variant={isActive ? "flat" : "light"}
+                      color={isActive ? "primary" : "default"}
+                      className={`
+                        w-full justify-start h-12 px-4
+                        ${
+                          isActive
+                            ? "bg-primary-50 border-r-3 border-primary"
+                            : "hover:bg-gray-100"
+                        }
+                      `}
+                      startContent={
+                        IconComponent && <IconComponent className="w-5 h-5" />
+                      }
+                      onClick={() => {
+                        // Close sidebar on mobile when item is clicked
+                        if (window.innerWidth < 1024) {
+                          onClose();
+                        }
+                      }}
+                    >
+                      <span className="text-left flex-1">{item.label}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+
+              <Divider className="my-4" />
+
+              {/* Additional Actions */}
+              <div className="space-y-2">
+                <Button
+                  variant="light"
+                  className="w-full justify-start h-10 px-4 text-gray-600"
+                  startContent={<AiOutlineSetting className="w-4 h-4" />}
+                >
+                  Settings
+                </Button>
+                <Button
+                  variant="light"
+                  color="danger"
+                  className="w-full justify-start h-10 px-4"
+                  startContent={<AiOutlineLogout className="w-4 h-4" />}
+                >
+                  Logout
+                </Button>
+              </div>
+            </nav>
+          </CardBody>
+        </Card>
+      </aside>
+    </>
+  );
+}

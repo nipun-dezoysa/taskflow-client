@@ -21,6 +21,7 @@ export default function PasswordInput({
       value={value}
       onChange={(e) => setState(e.target.value)}
       validationBehavior="native"
+      variant="bordered"
       validate={(t) =>
         validate
           ? validate(t)
@@ -30,7 +31,7 @@ export default function PasswordInput({
       }
       endContent={
         <button
-          className="focus:outline-none"
+          className="focus:outline-none cursor-pointer"
           type="button"
           onClick={() => setPassVisible(!passVisible)}
           aria-label="toggle password visibility"
