@@ -5,6 +5,10 @@ import React from "react";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { loginToAccount } from "@/services/authService";
+import { useAuthStore } from "@/store/authStore";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface FormValues {
   email: string;
@@ -26,25 +30,21 @@ function page() {
     password: "",
   };
 
+  const router = useRouter();
+
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, setFieldError, resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
-      const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/users", // Replace with your login API endpoint
-        {
-          email: values.email,
-          password: values.password,
-        }
-      );
-
-      console.log("Login successful:", response.data);
+      const response = await loginToAccount(values);
+      useAuthStore.getState().setToken(response.token, response.user);
       resetForm();
-      // Handle success (e.g., redirect, store token, show success message)
+      toast.success(response.message);
+      router.push("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
-      // Handle errors (e.g., show error message)
+
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         setFieldError("email", error.response.data.message);
       }

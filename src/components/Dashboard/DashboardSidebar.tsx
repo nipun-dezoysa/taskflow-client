@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button, Divider, Card, CardBody } from "@heroui/react";
+import { Button, Divider, Card, CardBody, useDisclosure } from "@heroui/react";
 import {
   AiOutlineHome,
   AiOutlineCheckSquare,
@@ -15,6 +15,7 @@ import {
   AiOutlineLogout,
 } from "react-icons/ai";
 import { BiPlus } from "react-icons/bi";
+import CreateTaskModal from "./CreateTaskModal";
 
 interface DashboardSidebarProps {
   userRole: "employee" | "manager";
@@ -37,6 +38,8 @@ export default function DashboardSidebar({
   onClose,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
+
+  const { isOpen: isDisclosureOpen, onOpen, onOpenChange } = useDisclosure();
 
   const commonMenuItems = [
     { href: "/dashboard", label: "Overview", icon: "Home" },
@@ -98,6 +101,7 @@ export default function DashboardSidebar({
             </div>
             <div className="px-4">
               <Button
+                onPress={onOpen}
                 className="w-full justify-start h-12 px-4"
                 color="primary"
                 startContent={<BiPlus className="w-5 h-5" />}
@@ -168,6 +172,7 @@ export default function DashboardSidebar({
           </CardBody>
         </Card>
       </aside>
+      <CreateTaskModal isOpen={isDisclosureOpen} onOpenChange={onOpenChange} />
     </>
   );
 }

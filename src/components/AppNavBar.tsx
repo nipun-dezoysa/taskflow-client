@@ -16,6 +16,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@heroui/react";
+import { useAuthStore } from "@/store/authStore";
 
 function Header() {
   const menuItems = [
@@ -33,7 +34,7 @@ function Header() {
 
   const [userInfo, setUserInfo] = React.useState(null); // Replace with actual user info fetching logic
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
+  const user = useAuthStore((state) => state.user);
   return (
     <>
       <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="full" isBordered>
@@ -49,7 +50,7 @@ function Header() {
           </NavbarBrand>
         </NavbarContent>
 
-        {!userInfo && (
+        {!user && (
           <NavbarContent justify="end">
             <NavbarItem className="hidden lg:flex">
               <Link href="/login">Login</Link>
@@ -62,7 +63,7 @@ function Header() {
           </NavbarContent>
         )}
 
-        {userInfo && (
+        {user && (
           <NavbarContent as="div" justify="end">
             <Button color="primary" variant="flat">
               Post a Job
@@ -74,21 +75,25 @@ function Header() {
                   as="button"
                   className="transition-transform"
                   color="secondary"
-                  name="Jason Hughes"
+                  name={user.fname+" "+user.lname}
                   size="sm"
                 />
               </DropdownTrigger>
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem
-                  href={`/account/`}
+                  href={`/dashboard/`}
                   key="profile"
                   className="h-14 gap-2"
                 >
                   <p className="font-semibold">Signed in as</p>
-                  <p className="font-semibold">asda@gmail.com</p>
+                  <p className="font-semibold">{user.email}</p>
                 </DropdownItem>
                 <DropdownItem key="settings">My Settings</DropdownItem>
-                <DropdownItem key="logout" color="danger">
+                <DropdownItem
+                  onClick={() => useAuthStore.getState().clearToken()}
+                  key="logout"
+                  color="danger"
+                >
                   Log Out
                 </DropdownItem>
               </DropdownMenu>

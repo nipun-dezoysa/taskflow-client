@@ -1,9 +1,11 @@
 "use client";
 
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
-import { Button } from "@heroui/react";
+import { Button, useDisclosure } from "@heroui/react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { useState } from "react";
+import TaskDrawer from "@/components/Dashboard/TaskDrawer";
+import { on } from "events";
 
 export default function DashboardLayout({
   children,
@@ -11,7 +13,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
     <div className="flex bg-gray-100 h-full">
       <div className="lg:hidden fixed top-4 left-4 z-50">
@@ -32,8 +34,9 @@ export default function DashboardLayout({
       />
 
       <main className="flex-1 overflow-y-auto lg:ml-0">
-        <div className="p-4 lg:p-8 pt-16 lg:pt-8">{children}</div>
+        <div className="p-8">{children}</div>
       </main>
+      <TaskDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
     </div>
   );
 }

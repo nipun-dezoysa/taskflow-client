@@ -92,7 +92,7 @@ const DashboardPage: React.FC = () => {
   const summaryCards: SummaryCard[] = getCardsForRole();
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="font-semibold text-2xl text-gray-900">
           Good Morning, Nipun

@@ -5,6 +5,10 @@ import React from "react";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import { registerAccount } from "@/services/authService";
+import { useRouter } from "next/navigation";
+import { toastConfig } from "@/utils/toastConfig";
+import { toast } from "react-toastify";
 
 interface FormValues {
   fname: string;
@@ -37,26 +41,26 @@ function page() {
     cpassword: "",
   };
 
+  const router = useRouter();
+
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting, setFieldError, resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
-      const response = await axios.post(
-        "https://jsonplaceholder.typicode.com/users",
-        {
-          name: `${values.fname} ${values.lname}`,
-          email: values.email,
-          password: values.password,
-        }
-      );
+      const response = await registerAccount({
+        fname: values.fname,
+        lname: values.lname,
+        email: values.email,
+        password: values.password,
+      });
 
-      console.log("Registration successful:", response.data);
+      console.log("Registration successful:", response);
       resetForm();
-      // Handle success (e.g., redirect, show success message)
+      toast.success(response.message, toastConfig);
+      router.push("/login");
     } catch (error) {
       console.error("Registration failed:", error);
-      // Handle errors (e.g., show error message)
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         setFieldError("email", error.response.data.message);
       }
