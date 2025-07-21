@@ -1,19 +1,19 @@
 "use client";
 
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
-import { useDisclosure } from "@heroui/react";
 import { useEffect, useState } from "react";
 import TaskDrawer from "@/components/Dashboard/TaskDrawer";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
+import { useDrawerStore } from "@/types/drawerStore";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onClose} = useDrawerStore();
   const user = useUserStore((state) => state.user);
 
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function DashboardLayout({
       <main className="flex-1 overflow-y-auto lg:ml-0">
         <div className="p-8">{children}</div>
       </main>
-      <TaskDrawer isOpen={isOpen} onOpenChange={onOpenChange} />
+      <TaskDrawer isOpen={isOpen} onOpenChange={onClose} />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 import { getUserAssignedTasks } from "@/services/taskService";
 import { useUserStore } from "@/store/userStore";
+import { useDrawerStore } from "@/types/drawerStore";
 import { TaskCard, TaskStatus } from "@/types/task.type";
 import React, { useEffect, useState } from "react";
 import { FaRegClock } from "react-icons/fa";
@@ -90,6 +91,7 @@ const TaskColumn = ({
   tasks: TaskCard[];
   bgColor: string;
 }) => {
+  const { onOpen } = useDrawerStore();
   const getPriorityColor = (priority: number) => {
     switch (priority) {
       case 2:
@@ -120,6 +122,7 @@ const TaskColumn = ({
       <div className="space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto">
         {tasks.map((task) => (
           <div
+            onClick={() => onOpen(task.id)}
             key={task.id}
             className="bg-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
