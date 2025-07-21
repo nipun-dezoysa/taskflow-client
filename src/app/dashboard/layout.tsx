@@ -3,9 +3,11 @@
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
 import { Button, useDisclosure } from "@heroui/react";
 import { AiOutlineMenu } from "react-icons/ai";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskDrawer from "@/components/Dashboard/TaskDrawer";
-import { on } from "events";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/userStore";
 
 export default function DashboardLayout({
   children,
@@ -14,6 +16,34 @@ export default function DashboardLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const user = useUserStore((state) => state.user);
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [hasAccess, setHasAccess] = useState(false);
+  useEffect(() => {
+    const isHydrated = useAuthStore.getState().isHydrated;
+
+    if (isHydrated) {
+      if (user) {
+        setHasAccess(true);
+      }
+      setLoading(false);
+    }
+  }, [user, router, useAuthStore.getState().isHydrated]);
+
+  if (loading) {
+    return <div>Loading...</div>; 
+  }
+
+  if (!hasAccess) {
+    return (
+      <div className="text-center mt-20">
+        You do not have access to this page.
+      </div>
+    );
+  }
+
   return (
     <div className="flex bg-gray-100 h-full">
       <div className="lg:hidden fixed top-4 left-4 z-50">
