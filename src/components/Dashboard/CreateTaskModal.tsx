@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   ModalContent,
@@ -21,34 +21,9 @@ import {
   now,
   getLocalTimeZone,
 } from "@internationalized/date";
-
-// Mock user data - replace with actual API call
-const mockUsers = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john.doe@company.com",
-    avatar: "https://i.pravatar.cc/150?u=john",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    email: "jane.smith@company.com",
-    avatar: "https://i.pravatar.cc/150?u=jane",
-  },
-  {
-    id: "3",
-    name: "Mike Johnson",
-    email: "mike.johnson@company.com",
-    avatar: "https://i.pravatar.cc/150?u=mike",
-  },
-  {
-    id: "4",
-    name: "Sarah Wilson",
-    email: "sarah.wilson@company.com",
-    avatar: "https://i.pravatar.cc/150?u=sarah",
-  },
-];
+import { User } from "@/types/user.type";
+import { getAllUsers } from "@/services/userService";
+import { createTask } from "@/services/taskService";
 
 interface TaskFormValues {
   title: string;
@@ -78,6 +53,17 @@ function CreateTaskModal({
   onOpenChange: (isOpen: boolean) => void;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [assigners, setAssigners] = useState<User[]>([]);
+
+  useEffect(() => {
+    getAllUsers()
+      .then((response) => {
+        setAssigners(response.data.users);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+  }, []);
 
   const initialValues: TaskFormValues = {
     title: "",
@@ -98,9 +84,15 @@ function CreateTaskModal({
         deadline: values.deadline?.toString(),
       };
 
-      console.log("Creating task:", taskData);
+      console.log("Creating task with data:", taskData);
 
-      // Reset form and close modal on success
+      const response = await createTask({
+        title: taskData.title,
+        description: taskData.description,
+        assigneeId: parseInt(taskData.assignedUserId, 10),
+        dueDate: taskData.deadline,
+      });
+      console.log("Task created successfully:", response.data);
       resetForm();
       onOpenChange(false);
 
@@ -184,20 +176,22 @@ function CreateTaskModal({
                         }
                         variant="bordered"
                       >
-                        {mockUsers.map((user) => (
+                        {assigners.map((user) => (
                           <AutocompleteItem
                             key={user.id}
-                            textValue={user.name}
+                            textValue={user.fname + " " + user.lname}
                             startContent={
                               <Avatar
-                                alt={user.name}
+                                alt={user.fname}
                                 className="w-6 h-6"
-                                src={user.avatar}
+                                name={user.fname}
                               />
                             }
                           >
                             <div className="flex flex-col">
-                              <span className="text-small">{user.name}</span>
+                              <span className="text-small">
+                                {user.fname + " " + user.lname}
+                              </span>
                               <span className="text-tiny text-default-400">
                                 {user.email}
                               </span>

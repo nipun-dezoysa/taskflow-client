@@ -41,7 +41,7 @@ export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
 
   const commonMenuItems = [
     { href: "/dashboard", label: "Overview", icon: "Home" },
-    { href: "/dashboard/tasks", label: "My Tasks", icon: "CheckSquare" },
+    { href: "/dashboard/my-tasks", label: "My Tasks", icon: "CheckSquare" },
   ];
 
   const managerOnlyItems = [
