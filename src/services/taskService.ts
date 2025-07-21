@@ -8,3 +8,7 @@ export const getTaskDetails = async (taskId: string) => {
 export const createTask = async (taskData: CreateTask) => {
   return axiosInstance.post("/task", taskData);
 };
+
+export const getUserAssignedTasks = async (userId: string) => {
+  return axiosInstance.get(`/task/user/${userId}/assigned`);
+}

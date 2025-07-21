@@ -43,7 +43,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex bg-gray-100 h-full">
+    <div className="flex bg-gray-100 h-screen">
       <DashboardSidebar userRole={user?.role} />
 
       <main className="flex-1 overflow-y-auto lg:ml-0">
