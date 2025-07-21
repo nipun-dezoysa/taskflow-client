@@ -17,6 +17,7 @@ import {
   DropdownItem,
 } from "@heroui/react";
 import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 
 function Header() {
   const menuItems = [
@@ -32,9 +33,8 @@ function Header() {
     "Log Out",
   ];
 
-  const [userInfo, setUserInfo] = React.useState(null); // Replace with actual user info fetching logic
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-  const user = useAuthStore((state) => state.user);
+  const user = useUserStore((state) => state.user);
   return (
     <>
       <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="full" isBordered>
@@ -75,7 +75,7 @@ function Header() {
                   as="button"
                   className="transition-transform"
                   color="secondary"
-                  name={user.fname+" "+user.lname}
+                  name={user.fname + " " + user.lname}
                   size="sm"
                 />
               </DropdownTrigger>
@@ -90,7 +90,10 @@ function Header() {
                 </DropdownItem>
                 <DropdownItem key="settings">My Settings</DropdownItem>
                 <DropdownItem
-                  onClick={() => useAuthStore.getState().clearToken()}
+                  onClick={() => {
+                    useAuthStore.getState().clearToken();
+                    useUserStore.getState().clearUser();
+                  }}
                   key="logout"
                   color="danger"
                 >

@@ -1,6 +1,6 @@
 "use client";
 import PasswordInput from "@/components/PasswordInput";
-import { Button, Input, Link } from "@heroui/react";
+import { Button, Input, Link, useUser } from "@heroui/react";
 import React from "react";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
@@ -9,6 +9,7 @@ import { loginToAccount } from "@/services/authService";
 import { useAuthStore } from "@/store/authStore";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/userStore";
 
 interface FormValues {
   email: string;
@@ -38,7 +39,8 @@ function page() {
   ) => {
     try {
       const response = await loginToAccount(values);
-      useAuthStore.getState().setToken(response.token, response.user);
+      useAuthStore.getState().setToken(response.accessToken);
+      useUserStore.getState().setUser(response.user);
       resetForm();
       toast.success(response.message);
       router.push("/dashboard");

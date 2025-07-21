@@ -5,6 +5,8 @@ import { Providers } from "./providers";
 import AppNavbar from "@/components/AppNavBar";
 import { ToastContainer } from "react-toastify";
 import { toastConfig } from "@/utils/toastConfig";
+import AuthWrapper from "@/components/AuthWrapper";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -31,10 +33,12 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <div className="flex flex-col min-h-screen">
-            <AppNavbar />
-            {children}
-          </div>
+          <AuthWrapper>
+            <div className="flex flex-col min-h-screen">
+              <AppNavbar />
+              {children}
+            </div>
+          </AuthWrapper>
           <ToastContainer {...toastConfig} />
         </Providers>
       </body>

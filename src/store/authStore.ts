@@ -6,12 +6,16 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       token: null,
-      user: null,
-      setToken: (token, user) => set({ token, user }),
-      clearToken: () => set({ token: null, user: null }),
+      isHydrated: false,
+      setToken: (token) => set({ token }),
+      clearToken: () => set({ token: null }),
+      setHydrated: () => set({ isHydrated: true }),
     }),
     {
       name: "auth-token-storage",
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated();
+      },
     }
   )
 );
