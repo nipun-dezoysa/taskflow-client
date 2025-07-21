@@ -18,31 +18,27 @@ import {
 } from "@heroui/react";
 import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
+import { AiOutlineMenu } from "react-icons/ai";
+import { useSideBarStore } from "@/store/dashStore";
 
 function Header() {
-  const menuItems = [
-    "Profile",
-    "Dashboard",
-    "Activity",
-    "Analytics",
-    "System",
-    "Deployments",
-    "My Settings",
-    "Team Settings",
-    "Help & Feedback",
-    "Log Out",
-  ];
-
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const user = useUserStore((state) => state.user);
+  const setSidebarOpen = useSideBarStore((state) => state.setSidebarOpen);
   return (
     <>
       <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="full" isBordered>
         <NavbarContent>
-          <NavbarMenuToggle
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            className="sm:hidden"
-          />
+          <div className="lg:hidden">
+            <Button
+              isIconOnly
+              variant="flat"
+              color="primary"
+              onPress={() => setSidebarOpen(true)}
+            >
+              <AiOutlineMenu className="w-5 h-5" />
+            </Button>
+          </div>
           <NavbarBrand>
             <Link href="/" className="font-bold text-3xl text-black">
               TaskFlow
@@ -65,9 +61,6 @@ function Header() {
 
         {user && (
           <NavbarContent as="div" justify="end">
-            <Button color="primary" variant="flat">
-              Post a Job
-            </Button>
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Avatar
@@ -103,27 +96,6 @@ function Header() {
             </Dropdown>
           </NavbarContent>
         )}
-
-        <NavbarMenu>
-          {menuItems.map((item, index) => (
-            <NavbarMenuItem key={`${item}-${index}`}>
-              <Link
-                className="w-full"
-                color={
-                  index === 2
-                    ? "primary"
-                    : index === menuItems.length - 1
-                    ? "danger"
-                    : "foreground"
-                }
-                href="#"
-                size="lg"
-              >
-                {item}
-              </Link>
-            </NavbarMenuItem>
-          ))}
-        </NavbarMenu>
       </Navbar>
     </>
   );

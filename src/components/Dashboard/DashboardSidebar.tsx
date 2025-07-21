@@ -16,12 +16,8 @@ import {
 } from "react-icons/ai";
 import { BiPlus } from "react-icons/bi";
 import CreateTaskModal from "./CreateTaskModal";
-
-interface DashboardSidebarProps {
-  userRole: "employee" | "manager";
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { useSideBarStore } from "@/store/dashStore";
+import { UserRole } from "@/types/user.type";
 
 const iconMap = {
   Home: AiOutlineHome,
@@ -32,14 +28,16 @@ const iconMap = {
   BarChart: AiOutlineBarChart,
 };
 
-export default function DashboardSidebar({
-  userRole,
-  isOpen,
-  onClose,
-}: DashboardSidebarProps) {
+export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
   const pathname = usePathname();
 
   const { isOpen: isDisclosureOpen, onOpen, onOpenChange } = useDisclosure();
+  const sidebarOpen = useSideBarStore((state) => state.sidebarOpen);
+  const setSidebarOpen = useSideBarStore((state) => state.setSidebarOpen);
+
+  const onClose = () => {
+    setSidebarOpen(false);
+  };
 
   const commonMenuItems = [
     { href: "/dashboard", label: "Overview", icon: "Home" },
@@ -56,14 +54,14 @@ export default function DashboardSidebar({
   ];
 
   const menuItems =
-    userRole === "manager"
+    userRole === "MANAGER"
       ? [...commonMenuItems, ...managerOnlyItems]
       : commonMenuItems;
 
   return (
     <>
       {/* Backdrop for mobile */}
-      {isOpen && (
+      {sidebarOpen && (
         <div
           className="fixed inset-0 backdrop-blur-xs z-40 lg:hidden"
           onClick={onClose}
@@ -76,7 +74,9 @@ export default function DashboardSidebar({
           fixed lg:static inset-y-0 left-0 z-50
           w-64 bg-white shadow-lg
           transform transition-transform duration-300 ease-in-out
-          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          }
         `}
       >
         <Card className="h-full rounded-none shadow-none">
@@ -85,7 +85,7 @@ export default function DashboardSidebar({
             <div className="p-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-800">
-                  {userRole === "manager"
+                  {userRole === "MANAGER"
                     ? "Manager Dashboard"
                     : "Employee Dashboard"}
                 </h2>
