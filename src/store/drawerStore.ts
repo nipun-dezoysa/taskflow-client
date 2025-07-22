@@ -4,13 +4,22 @@ import { create } from "zustand";
 type DrawerStore = {
   isOpen: boolean;
   task?: Task;
-  onOpen: (task: Task) => void;
+  callBack: (updatedTask: Task) => void;
+  setTask: (task: Task) => void;
+  updateTask: (updatedTask: Task) => void;
+  onOpen: (task: Task, callback?: (updatedTask: Task) => void) => void;
   onClose: () => void;
 };
 
-export const useDrawerStore = create<DrawerStore>((set) => ({
+export const useDrawerStore = create<DrawerStore>((set, get) => ({
   isOpen: false,
-  taskId: undefined,
-  onOpen: (task) => set({ isOpen: true, task }),
-  onClose: () => set({ isOpen: false, task: undefined }),
+  task: undefined,
+  callBack: () => {},
+  setTask: (task) => set({ task }),
+  updateTask: (updatedTask) => {
+    set({ task: updatedTask });
+    get().callBack(updatedTask); 
+  },
+  onOpen: (task, callBack = () => {}) => set({ isOpen: true, task, callBack }),
+  onClose: () => set({ isOpen: false, task: undefined, callBack: () => {} }),
 }));

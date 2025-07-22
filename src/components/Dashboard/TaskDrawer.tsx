@@ -36,19 +36,32 @@ function TaskDrawer({
     TaskStatus.PENDING
   );
   const user = useUserStore((state) => state.user);
+  const updateTask = useDrawerStore((state) => state.updateTask);
+
   useEffect(() => {
     if (task) {
       setSelectedStatus(task.status);
     }
   }, [task]);
 
-  const onSelectChange = (keys: any) => {
+  const onSelectChange = async (keys: any) => {
     const selectedKey = Array.from(keys as Set<string>)[0];
     setSelectedStatus(selectedKey as TaskStatus);
     if (task) {
-      updateTaskStatus(task.id, selectedKey as TaskStatus).catch((e) => {
-        toast.error(e.data.message);
-      });
+      try {
+        const response = await updateTaskStatus(
+          task.id,
+          selectedKey as TaskStatus
+        );
+        const updatedTask = {
+          ...task,
+          status: selectedKey as TaskStatus,
+          updatedAt: new Date().toISOString(),
+        };
+        updateTask(updatedTask);
+      } catch (error) {
+        toast.error("Failed to update task status");
+      }
     }
   };
 
