@@ -10,7 +10,7 @@ import {
 } from "@heroui/react";
 import { IoCalendarOutline } from "react-icons/io5";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { updateTaskStatus } from "@/services/taskService";
 import { useDrawerStore } from "@/store/drawerStore";
 import { TaskStatus } from "@/types/task.type";
@@ -106,12 +106,24 @@ function TaskDrawer({
                       <h3 className="font-medium text-gray-500 flex items-center justify-between">
                         <span>Description</span>
                         {task.creator.id == user?.id && (
-                          <span onClick={onOpen} className="cursor-pointer">
+                          <span
+                            onClick={onOpen}
+                            className="cursor-pointer p-2 hover:bg-gray-200 rounded-full duration-100 ease-in-out"
+                          >
                             <MdModeEditOutline />
                           </span>
                         )}
                       </h3>
-                      <p className="text-gray-800">{task.description}</p>
+                      <p className="text-gray-800">
+                        {task.description.split("\n").map((line, i) => (
+                          <React.Fragment key={i}>
+                            {line}
+                            {i !== task.description.split("\n").length - 1 && (
+                              <br />
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div

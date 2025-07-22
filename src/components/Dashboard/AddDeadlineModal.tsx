@@ -78,7 +78,7 @@ function AddDeadlineModal({
             {({ values, errors, touched, setFieldValue, isValid, dirty }) => (
               <Form>
                 <ModalHeader className="flex flex-col gap-1">
-                  Create New Task
+                  Add Deadline to Task
                 </ModalHeader>
                 <ModalBody className="gap-4">
                   <Field name="deadline">

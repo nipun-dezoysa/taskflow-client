@@ -2,10 +2,11 @@
 import { getUserAssignedTasks } from "@/services/taskService";
 import { useUserStore } from "@/store/userStore";
 import { useDrawerStore } from "@/store/drawerStore";
-import { Task, TaskCard, TaskStatus } from "@/types/task.type";
+import { Task, TaskStatus } from "@/types/task.type";
 import { getPriorityColor, getPriorityLabel } from "@/utils/uiTools";
 import React, { useCallback, useEffect, useState } from "react";
 import { FaRegClock } from "react-icons/fa";
+import { format } from "date-fns";
 
 function TasksPage() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
@@ -75,7 +76,9 @@ function TasksPage() {
     const { onOpen } = useDrawerStore();
 
     return (
-      <div className={`flex-1 p-3 sm:p-4 ${bgColor} rounded-lg`}>
+      <div
+        className={`md:flex-1 max-md:w-full p-3 sm:p-4 ${bgColor} rounded-lg`}
+      >
         <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">
           {title}
         </h2>
@@ -97,7 +100,11 @@ function TasksPage() {
                 </span>
                 <span className="text-gray-500 flex px-2 py-1 rounded-full items-center bg-gray-100 gap-2">
                   <FaRegClock />{" "}
-                  {task.deadlines.length > 0 && task.deadlines[0].dueDate}
+                  {task.deadlines.length > 0 &&
+                    format(
+                      new Date(task.deadlines[0].dueDate),
+                      "MMMM do, yyyy 'at' h:mm a"
+                    )}
                 </span>
               </div>
             </div>

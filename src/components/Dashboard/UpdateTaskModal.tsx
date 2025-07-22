@@ -38,8 +38,7 @@ const validationSchema = Yup.object({
     .max(100, "Title must be less than 100 characters"),
   description: Yup.string()
     .required("Task description is required")
-    .min(10, "Description must be at least 10 characters")
-    .max(500, "Description must be less than 500 characters"),
+    .min(5, "Description must be at least 5 characters"),
   assignedUserId: Yup.string().required("Please assign the task to a user"),
 });
 
@@ -96,6 +95,9 @@ function UpdateTaskModal({
           assigneeId: parseInt(values.assignedUserId, 10),
           priority: values.priority,
         });
+        console.log(updatedTask);
+        
+        console.log("Task updated:", response.data);
         toast.success("Task updated successfully");
       }
 

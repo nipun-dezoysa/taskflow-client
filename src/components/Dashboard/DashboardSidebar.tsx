@@ -71,7 +71,7 @@ export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:static inset-y-0 left-0 z-50
+          fixed lg:static inset-y-0 left-0 max-md:z-50
           w-64 bg-white shadow-lg
           transform transition-transform duration-300 ease-in-out
           ${
