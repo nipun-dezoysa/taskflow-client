@@ -15,12 +15,14 @@ import {
 import { IoCalendarOutline } from "react-icons/io5";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
-import { getTaskDetails } from "@/services/taskService";
-import { useDrawerStore } from "@/types/drawerStore";
+import { getTaskDetails, updateTaskStatus } from "@/services/taskService";
+import { useDrawerStore } from "@/store/drawerStore";
 import { Task, TaskStatus } from "@/types/task.type";
 import { User } from "@/types/user.type";
 import { useUserStore } from "@/store/userStore";
 import { getPriorityColor, getPriorityLabel } from "@/utils/uiTools";
+import axiosInstance from "@/utils/axiosInstance";
+import { toast } from "react-toastify";
 
 function TaskDrawer({
   isOpen,
@@ -29,20 +31,26 @@ function TaskDrawer({
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [task, setTask] = useState<Task | null>(null);
-  const taskId = useDrawerStore((state) => state.taskId);
+  const task = useDrawerStore((state) => state.task);
+  const [selectedStatus, setSelectedStatus] = useState<TaskStatus>(
+    TaskStatus.PENDING
+  );
   const user = useUserStore((state) => state.user);
   useEffect(() => {
-    if (taskId) {
-      getTaskDetails(taskId)
-        .then((response) => {
-          setTask(response.data);
-        })
-        .catch((error) => {
-          console.error("Error fetching task details:", error);
-        });
+    if (task) {
+      setSelectedStatus(task.status);
     }
-  }, [taskId]);
+  }, [task]);
+
+  const onSelectChange = (keys: any) => {
+    const selectedKey = Array.from(keys as Set<string>)[0];
+    setSelectedStatus(selectedKey as TaskStatus);
+    if (task) {
+      updateTaskStatus(task.id, selectedKey as TaskStatus).catch((e) => {
+        toast.error(e.data.message);
+      });
+    }
+  };
 
   return (
     <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -94,7 +102,8 @@ function TaskDrawer({
                       </div>
                     </div>
                     <Select
-                      selectedKeys={[task.status]}
+                      selectedKeys={[selectedStatus]}
+                      onSelectionChange={onSelectChange}
                       label="Task Status"
                       variant="bordered"
                       isDisabled={task.assignee.id !== user?.id}

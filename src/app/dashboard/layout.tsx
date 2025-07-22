@@ -6,14 +6,14 @@ import TaskDrawer from "@/components/Dashboard/TaskDrawer";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
-import { useDrawerStore } from "@/types/drawerStore";
+import { useDrawerStore } from "@/store/drawerStore";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isOpen, onClose} = useDrawerStore();
+  const { isOpen, onClose } = useDrawerStore();
   const user = useUserStore((state) => state.user);
 
   const router = useRouter();

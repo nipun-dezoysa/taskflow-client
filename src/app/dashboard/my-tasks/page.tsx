@@ -1,18 +1,18 @@
 "use client";
 import { getUserAssignedTasks } from "@/services/taskService";
 import { useUserStore } from "@/store/userStore";
-import { useDrawerStore } from "@/types/drawerStore";
-import { TaskCard, TaskStatus } from "@/types/task.type";
+import { useDrawerStore } from "@/store/drawerStore";
+import { Task, TaskCard, TaskStatus } from "@/types/task.type";
 import { getPriorityColor, getPriorityLabel } from "@/utils/uiTools";
 import React, { useEffect, useState } from "react";
 import { FaRegClock } from "react-icons/fa";
 
 function TasksPage() {
-  const [allTasks, setAllTasks] = useState<TaskCard[]>([]);
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [categorizedTasks, setCategorizedTasks] = useState<{
-    todo: TaskCard[];
-    inProgress: TaskCard[];
-    completed: TaskCard[];
+    todo: Task[];
+    inProgress: Task[];
+    completed: Task[];
   }>({
     todo: [],
     inProgress: [],
@@ -89,18 +89,18 @@ const TaskColumn = ({
   bgColor,
 }: {
   title: string;
-  tasks: TaskCard[];
+  tasks: Task[];
   bgColor: string;
 }) => {
   const { onOpen } = useDrawerStore();
- 
+
   return (
     <div className={`flex-1 p-3 sm:p-4 ${bgColor} rounded-lg`}>
       <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{title}</h2>
       <div className="space-y-2 max-h-[calc(100vh-12rem)] overflow-y-auto">
         {tasks.map((task) => (
           <div
-            onClick={() => onOpen(task.id)}
+            onClick={() => onOpen(task)}
             key={task.id}
             className="bg-white p-3 sm:p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
           >
@@ -114,7 +114,8 @@ const TaskColumn = ({
                 {getPriorityLabel(task.priority)}
               </span>
               <span className="text-gray-500 flex px-2 py-1 rounded-full items-center bg-gray-100 gap-2">
-                <FaRegClock /> {task.dueDate}
+                <FaRegClock />{" "}
+                {task.deadlines.length > 0 && task.deadlines[0].dueDate}
               </span>
             </div>
           </div>
