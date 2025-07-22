@@ -1,6 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { FiMoreVertical } from "react-icons/fi";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -8,7 +7,6 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  getKeyValue,
   Avatar,
 } from "@heroui/react";
 import { Task } from "@/types/task.type";
@@ -16,6 +14,7 @@ import { useUserStore } from "@/store/userStore";
 import { getUserCreatedTasks } from "@/services/taskService";
 import { format } from "date-fns";
 import { getPriorityColor, getPriorityLabel } from "@/utils/uiTools";
+import { useDrawerStore } from "@/store/drawerStore";
 
 const columns = [
   {
@@ -46,6 +45,13 @@ const columns = [
 function page() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const user = useUserStore((state) => state.user);
+  const { onOpen } = useDrawerStore();
+
+  const updateTaskInList = useCallback((updatedTask: Task) => {
+    setAllTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -73,7 +79,11 @@ function page() {
           </TableHeader>
           <TableBody>
             {allTasks.map((task) => (
-              <TableRow key={task.id}>
+              <TableRow
+                key={task.id}
+                onClick={() => onOpen(task, updateTaskInList)}
+                className="cursor-pointer hover:bg-gray-100"
+              >
                 <TableCell>{task.title}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
