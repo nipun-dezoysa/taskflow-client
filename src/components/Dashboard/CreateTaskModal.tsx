@@ -27,6 +27,7 @@ import { User } from "@/types/user.type";
 import { getAllUsers } from "@/services/userService";
 import { createTask } from "@/services/taskService";
 import { Priority } from "@/types/task.type";
+import { toast } from "react-toastify";
 
 interface TaskFormValues {
   title: string;
@@ -89,6 +90,7 @@ function CreateTaskModal({
         dueDate: values.deadline?.toString(),
         priority: values.priority,
       });
+      toast.success("Task created successfully!");
       resetForm();
       onOpenChange(false);
     } catch (error) {

@@ -14,6 +14,7 @@ import {
   AiOutlineSetting,
   AiOutlineLogout,
 } from "react-icons/ai";
+import { MdOutlineEdit } from "react-icons/md";
 import { BiPlus } from "react-icons/bi";
 import CreateTaskModal from "./CreateTaskModal";
 import { useSideBarStore } from "@/store/dashStore";
@@ -22,7 +23,7 @@ import { UserRole } from "@/types/user.type";
 const iconMap = {
   Home: AiOutlineHome,
   CheckSquare: AiOutlineCheckSquare,
-  Plus: AiOutlinePlus,
+  Plus: MdOutlineEdit,
   Users: AiOutlineTeam,
   UserCog: AiOutlineUserSwitch,
   BarChart: AiOutlineBarChart,
@@ -42,6 +43,7 @@ export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
   const commonMenuItems = [
     { href: "/dashboard", label: "Overview", icon: "Home" },
     { href: "/dashboard/my-tasks", label: "My Tasks", icon: "CheckSquare" },
+    { href: "/dashboard/created", label: "Created Tasks", icon: "Plus" },
   ];
 
   const managerOnlyItems = [

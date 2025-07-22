@@ -6,7 +6,10 @@ export type User = {
   role: UserRole;
 };
 
-export type UserRole = "MANAGER" | "EMPLOYEE";
+export enum UserRole {
+  MANAGER = "MANAGER",
+  EMPLOYEE = "EMPLOYEE",
+}
 
 export type UserState = {
   user: User | null;

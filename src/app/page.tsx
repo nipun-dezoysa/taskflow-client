@@ -1,5 +1,4 @@
-import { Button } from "@heroui/react";
-import Link from "next/link";
+import { Button, Link } from "@heroui/react";
 import { HiDocumentAdd, HiUserGroup, HiChartBar } from "react-icons/hi";
 
 export default function Home() {
@@ -17,16 +16,18 @@ export default function Home() {
               our intuitive task management system.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link href="/register">
-                <Button variant="solid" color="primary" size="lg">
-                  Get Started
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button variant="bordered" size="lg">
-                  Login
-                </Button>
-              </Link>
+              <Button
+                as={Link}
+                href="/register"
+                variant="solid"
+                color="primary"
+                size="lg"
+              >
+                Get Started
+              </Button>
+              <Button as={Link} href="/login" variant="bordered" size="lg">
+                Login
+              </Button>
             </div>
           </div>
         </div>
@@ -44,7 +45,6 @@ export default function Home() {
           </div>
           <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
             <div className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-              
               <FeatureCard
                 icon={HiDocumentAdd}
                 title="Task Creation"
@@ -76,11 +76,15 @@ export default function Home() {
               efficiently.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link href="/register">
-                <Button variant="solid" color="secondary" size="lg">
-                  Get started today
-                </Button>
-              </Link>
+              <Button
+                as={Link}
+                href="/register"
+                variant="solid"
+                color="secondary"
+                size="lg"
+              >
+                Get started today
+              </Button>
             </div>
           </div>
         </div>

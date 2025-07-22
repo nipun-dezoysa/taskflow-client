@@ -1,3 +1,4 @@
+"use client";
 import SummaryCards from "@/components/Dashboard/SummaryCards";
 import { SummaryCard, SummaryData } from "@/types/dashbord.type";
 import React from "react";
@@ -9,18 +10,13 @@ import {
   FiBarChart,
   FiPlus,
 } from "react-icons/fi";
+import { format } from "date-fns";
+import { useUserStore } from "@/store/userStore";
+import { UserRole } from "@/types/user.type";
 
-// Type definitions
-interface Trend {
-  value: number;
-  isPositive: boolean;
-}
-
-type UserRole = "manager" | "employee";
-
-const DashboardPage: React.FC = () => {
-  // This would come from your auth context or API
-  const userRole: UserRole = "manager"; // or "employee"
+const DashboardPage = () => {
+  const user = useUserStore((state) => state.user);
+  const dateString = format(new Date(), "EEEE, d MMMM yyyy");
 
   const summaryData: SummaryData = {
     totalTasks: 24,
@@ -86,7 +82,9 @@ const DashboardPage: React.FC = () => {
       },
     ];
 
-    return userRole === "manager" ? [...baseCards, ...managerCards] : baseCards;
+    return user?.role === UserRole.MANAGER
+      ? [...baseCards, ...managerCards]
+      : baseCards;
   };
 
   const summaryCards: SummaryCard[] = getCardsForRole();
@@ -95,9 +93,9 @@ const DashboardPage: React.FC = () => {
     <div className="space-y-6">
       <div>
         <h1 className="font-semibold text-2xl text-gray-900">
-          Good Morning, Nipun
+          Good Morning, {user?.fname || "User"}!
         </h1>
-        <p className="text-gray-600">it's Monday, 12 October 2025</p>
+        <p className="text-gray-600">it's {dateString}</p>
       </div>
       <SummaryCards summaryCards={summaryCards} />
     </div>

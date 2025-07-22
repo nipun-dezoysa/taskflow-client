@@ -17,6 +17,10 @@ export const getUserAssignedTasks = async (userId: string) => {
   return axiosInstance.get(`/task/user/${userId}/assigned`);
 };
 
+export const getUserCreatedTasks = async (userId: string) => {
+  return axiosInstance.get(`/task/user/${userId}/created`);
+};
+
 export const updateTaskStatus = async (taskId: number, status: TaskStatus) => {
   return axiosInstance.patch(`/task/${taskId}/status`, { status });
 };
