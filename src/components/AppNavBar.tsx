@@ -68,6 +68,7 @@ function Header() {
                   as="button"
                   className="transition-transform"
                   color="secondary"
+                  src={`https://ui-avatars.com/api/?name=${user.fname}+${user.lname}`}
                   name={user.fname + " " + user.lname}
                   size="sm"
                 />

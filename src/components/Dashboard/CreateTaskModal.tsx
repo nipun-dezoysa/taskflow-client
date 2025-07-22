@@ -12,6 +12,8 @@ import {
   AutocompleteItem,
   Avatar,
   DatePicker,
+  Select,
+  SelectItem,
 } from "@heroui/react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
@@ -24,12 +26,14 @@ import {
 import { User } from "@/types/user.type";
 import { getAllUsers } from "@/services/userService";
 import { createTask } from "@/services/taskService";
+import { Priority } from "@/types/task.type";
 
 interface TaskFormValues {
   title: string;
   description: string;
   assignedUserId: string;
   deadline: CalendarDateTime | null;
+  priority: Priority;
 }
 
 const validationSchema = Yup.object({
@@ -70,36 +74,26 @@ function CreateTaskModal({
     description: "",
     assignedUserId: "",
     deadline: null,
+    priority: 0,
   };
 
   const handleSubmit = async (values: TaskFormValues, { resetForm }: any) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      const taskData = {
-        ...values,
-        deadline: values.deadline?.toString(),
-      };
-
-      console.log("Creating task with data:", taskData);
+      console.log(values);
 
       const response = await createTask({
-        title: taskData.title,
-        description: taskData.description,
-        assigneeId: parseInt(taskData.assignedUserId, 10),
-        dueDate: taskData.deadline,
+        title: values.title,
+        description: values.description,
+        assigneeId: parseInt(values.assignedUserId, 10),
+        dueDate: values.deadline?.toString(),
+        priority: values.priority,
       });
-      console.log("Task created successfully:", response.data);
       resetForm();
       onOpenChange(false);
-
-      // You can add a success notification here
     } catch (error) {
       console.error("Error creating task:", error);
-      // You can add error handling here
     } finally {
       setIsSubmitting(false);
     }
@@ -125,7 +119,6 @@ function CreateTaskModal({
                   Create New Task
                 </ModalHeader>
                 <ModalBody className="gap-4">
-                  {/* Title Field */}
                   <Field name="title">
                     {({ field }: any) => (
                       <Input
@@ -140,7 +133,6 @@ function CreateTaskModal({
                     )}
                   </Field>
 
-                  {/* Description Field */}
                   <Field name="description">
                     {({ field }: any) => (
                       <Textarea
@@ -157,52 +149,74 @@ function CreateTaskModal({
                     )}
                   </Field>
 
-                  {/* Assigned User Field with Autocomplete */}
-                  <Field name="assignedUserId">
-                    {({ field, meta }: any) => (
-                      <Autocomplete
-                        label="Assign to User"
-                        placeholder="Search and select a user"
-                        isRequired
-                        selectedKey={values.assignedUserId}
-                        onSelectionChange={(key) =>
-                          setFieldValue("assignedUserId", key)
-                        }
-                        isInvalid={
-                          touched.assignedUserId && !!errors.assignedUserId
-                        }
-                        errorMessage={
-                          touched.assignedUserId && errors.assignedUserId
-                        }
-                        variant="bordered"
-                      >
-                        {assigners.map((user) => (
-                          <AutocompleteItem
-                            key={user.id}
-                            textValue={user.fname + " " + user.lname}
-                            startContent={
-                              <Avatar
-                                alt={user.fname}
-                                className="w-6 h-6"
-                                name={user.fname}
-                              />
-                            }
-                          >
-                            <div className="flex flex-col">
-                              <span className="text-small">
-                                {user.fname + " " + user.lname}
-                              </span>
-                              <span className="text-tiny text-default-400">
-                                {user.email}
-                              </span>
-                            </div>
-                          </AutocompleteItem>
-                        ))}
-                      </Autocomplete>
-                    )}
-                  </Field>
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    <Field name="assignedUserId">
+                      {({ field, meta }: any) => (
+                        <Autocomplete
+                          label="Assign to User"
+                          placeholder="Search and select a user"
+                          isRequired
+                          selectedKey={values.assignedUserId}
+                          onSelectionChange={(key) =>
+                            setFieldValue("assignedUserId", key)
+                          }
+                          isInvalid={
+                            touched.assignedUserId && !!errors.assignedUserId
+                          }
+                          errorMessage={
+                            touched.assignedUserId && errors.assignedUserId
+                          }
+                          variant="bordered"
+                        >
+                          {assigners.map((user) => (
+                            <AutocompleteItem
+                              key={user.id}
+                              textValue={user.fname + " " + user.lname}
+                              startContent={
+                                <Avatar
+                                  alt={user.fname}
+                                  className="w-6 h-6"
+                                  name={user.fname}
+                                  src={`https://ui-avatars.com/api/?name=${user.fname}+${user.lname}`}
+                                />
+                              }
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-small">
+                                  {user.fname + " " + user.lname}
+                                </span>
+                                <span className="text-tiny text-default-400">
+                                  {user.email}
+                                </span>
+                              </div>
+                            </AutocompleteItem>
+                          ))}
+                        </Autocomplete>
+                      )}
+                    </Field>
+                    <Field name="priority">
+                      {({ field, meta }: any) => (
+                        <Select
+                          label="Priority"
+                          variant="bordered"
+                          defaultSelectedKeys={["0"]}
+                          selectedKeys={[String(values.priority)]}
+                          onSelectionChange={(key) =>
+                            setFieldValue(
+                              "priority",
+                              parseInt(Array.from(key)[0] as string, 10)
+                            )
+                          }
+                          isRequired
+                        >
+                          <SelectItem key="0">Low</SelectItem>
+                          <SelectItem key="1">Medium</SelectItem>
+                          <SelectItem key="2">High</SelectItem>
+                        </Select>
+                      )}
+                    </Field>
+                  </div>
 
-                  {/* Deadline Field with Date and Time */}
                   <Field name="deadline">
                     {({ field, meta }: any) => (
                       <DatePicker

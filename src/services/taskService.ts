@@ -1,7 +1,7 @@
 import { CreateTask } from "@/types/task.type";
 import axiosInstance from "@/utils/axiosInstance";
 
-export const getTaskDetails = async (taskId: string) => {
+export const getTaskDetails = async (taskId: number) => {
   return axiosInstance.get(`/task/${taskId}`);
 };
 
@@ -11,4 +11,4 @@ export const createTask = async (taskData: CreateTask) => {
 
 export const getUserAssignedTasks = async (userId: string) => {
   return axiosInstance.get(`/task/user/${userId}/assigned`);
-}
+};

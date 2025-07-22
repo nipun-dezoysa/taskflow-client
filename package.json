@@ -12,6 +12,7 @@
     "@heroui/react": "^2.8.1",
     "@internationalized/date": "^3.8.2",
     "axios": "^1.10.0",
+    "date-fns": "^4.1.0",
     "formik": "^2.4.6",
     "framer-motion": "^12.23.6",
     "next": "15.3.5",

@@ -3,6 +3,7 @@ import { getUserAssignedTasks } from "@/services/taskService";
 import { useUserStore } from "@/store/userStore";
 import { useDrawerStore } from "@/types/drawerStore";
 import { TaskCard, TaskStatus } from "@/types/task.type";
+import { getPriorityColor, getPriorityLabel } from "@/utils/uiTools";
 import React, { useEffect, useState } from "react";
 import { FaRegClock } from "react-icons/fa";
 
@@ -92,30 +93,7 @@ const TaskColumn = ({
   bgColor: string;
 }) => {
   const { onOpen } = useDrawerStore();
-  const getPriorityColor = (priority: number) => {
-    switch (priority) {
-      case 2:
-        return "bg-red-100 text-red-800";
-      case 1:
-        return "bg-yellow-100 text-yellow-800";
-      case 0:
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-  const getPriorityLabel = (priority: number) => {
-    switch (priority) {
-      case 2:
-        return "High";
-      case 1:
-        return "Medium";
-      case 0:
-        return "Low";
-      default:
-        return "Unknown";
-    }
-  };
+ 
   return (
     <div className={`flex-1 p-3 sm:p-4 ${bgColor} rounded-lg`}>
       <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{title}</h2>
