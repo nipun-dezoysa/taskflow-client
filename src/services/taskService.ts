@@ -9,6 +9,10 @@ export const createTask = async (taskData: CreateTask) => {
   return axiosInstance.post("/task", taskData);
 };
 
+export const updateApiTask = async (taskId: number, taskData: CreateTask) => {
+  return axiosInstance.put(`/task/${taskId}`, taskData);
+};
+
 export const getUserAssignedTasks = async (userId: string) => {
   return axiosInstance.get(`/task/user/${userId}/assigned`);
 };

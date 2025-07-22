@@ -1,0 +1,258 @@
+import React, { useEffect, useState } from "react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Input,
+  Textarea,
+  Autocomplete,
+  AutocompleteItem,
+  Avatar,
+  Select,
+  SelectItem,
+} from "@heroui/react";
+import { Formik, Form, Field } from "formik";
+import * as Yup from "yup";
+import { User } from "@/types/user.type";
+import { getAllUsers } from "@/services/userService";
+import { createTask, updateApiTask } from "@/services/taskService";
+import { Priority } from "@/types/task.type";
+import { useDrawerStore } from "@/store/drawerStore";
+import { useUserStore } from "@/store/userStore";
+import { toast } from "react-toastify";
+
+interface TaskFormValues {
+  title: string;
+  description: string;
+  assignedUserId: string;
+  priority: Priority;
+}
+
+const validationSchema = Yup.object({
+  title: Yup.string()
+    .required("Task title is required")
+    .min(3, "Title must be at least 3 characters")
+    .max(100, "Title must be less than 100 characters"),
+  description: Yup.string()
+    .required("Task description is required")
+    .min(10, "Description must be at least 10 characters")
+    .max(500, "Description must be less than 500 characters"),
+  assignedUserId: Yup.string().required("Please assign the task to a user"),
+});
+
+function UpdateTaskModal({
+  isOpen,
+  onOpenChange,
+}: {
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
+}) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [assigners, setAssigners] = useState<User[]>([]);
+
+  const task = useDrawerStore((state) => state.task);
+  const user = useUserStore((state) => state.user);
+  const updateTask = useDrawerStore((state) => state.updateTask);
+
+  useEffect(() => {
+    getAllUsers()
+      .then((response) => {
+        setAssigners(response.data.users);
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+  }, []);
+
+  const initialValues: TaskFormValues = {
+    title: task?.title || "",
+    description: task?.description || "",
+    assignedUserId: task?.assignee.id || "",
+    priority: task?.priority || 0,
+  };
+
+  const handleSubmit = async (values: TaskFormValues, { resetForm }: any) => {
+    setIsSubmitting(true);
+
+    try {
+      console.log(values);
+      if (task) {
+        const updatedTask = {
+          ...task,
+          title: values.title,
+          description: values.description,
+          assignee:
+            assigners.find((user) => user.id === values.assignedUserId) ||
+            task.assignee,
+          priority: values.priority,
+          updatedAt: new Date().toISOString(),
+        };
+        updateTask(updatedTask);
+        const response = await updateApiTask(task.id, {
+          title: values.title,
+          description: values.description,
+          assigneeId: parseInt(values.assignedUserId, 10),
+          priority: values.priority,
+        });
+        toast.success("Task updated successfully");
+      }
+
+      resetForm();
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error creating task:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      size="2xl"
+      scrollBehavior="inside"
+    >
+      <ModalContent>
+        {(onClose) => (
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+            enableReinitialize={true}
+          >
+            {({ values, errors, touched, setFieldValue, isValid, dirty }) => (
+              <Form>
+                <ModalHeader className="flex flex-col gap-1">
+                  Update Task
+                </ModalHeader>
+                <ModalBody className="gap-4">
+                  <Field name="title">
+                    {({ field }: any) => (
+                      <Input
+                        {...field}
+                        label="Task Title"
+                        placeholder="Enter task title"
+                        isRequired
+                        isInvalid={touched.title && !!errors.title}
+                        errorMessage={touched.title && errors.title}
+                        variant="bordered"
+                      />
+                    )}
+                  </Field>
+
+                  <Field name="description">
+                    {({ field }: any) => (
+                      <Textarea
+                        {...field}
+                        label="Task Description"
+                        placeholder="Enter task description"
+                        isRequired
+                        isInvalid={touched.description && !!errors.description}
+                        errorMessage={touched.description && errors.description}
+                        variant="bordered"
+                        minRows={3}
+                        maxRows={6}
+                      />
+                    )}
+                  </Field>
+
+                  <div className="flex flex-col gap-4 md:flex-row">
+                    <Field name="assignedUserId">
+                      {({ field, meta }: any) => (
+                        <Autocomplete
+                          label="Assign to User"
+                          placeholder="Search and select a user"
+                          isRequired
+                          selectedKey={values.assignedUserId}
+                          onSelectionChange={(key) =>
+                            setFieldValue("assignedUserId", key)
+                          }
+                          isInvalid={
+                            touched.assignedUserId && !!errors.assignedUserId
+                          }
+                          errorMessage={
+                            touched.assignedUserId && errors.assignedUserId
+                          }
+                          variant="bordered"
+                        >
+                          {assigners.map((user) => (
+                            <AutocompleteItem
+                              key={user.id}
+                              textValue={user.fname + " " + user.lname}
+                              startContent={
+                                <Avatar
+                                  alt={user.fname}
+                                  className="w-6 h-6"
+                                  name={user.fname}
+                                  src={`https://ui-avatars.com/api/?name=${user.fname}+${user.lname}`}
+                                />
+                              }
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-small">
+                                  {user.fname + " " + user.lname}
+                                </span>
+                                <span className="text-tiny text-default-400">
+                                  {user.email}
+                                </span>
+                              </div>
+                            </AutocompleteItem>
+                          ))}
+                        </Autocomplete>
+                      )}
+                    </Field>
+                    <Field name="priority">
+                      {({ field, meta }: any) => (
+                        <Select
+                          label="Priority"
+                          variant="bordered"
+                          defaultSelectedKeys={["0"]}
+                          selectedKeys={[String(values.priority)]}
+                          onSelectionChange={(key) =>
+                            setFieldValue(
+                              "priority",
+                              parseInt(Array.from(key)[0] as string, 10)
+                            )
+                          }
+                          isRequired
+                        >
+                          <SelectItem key="0">Low</SelectItem>
+                          <SelectItem key="1">Medium</SelectItem>
+                          <SelectItem key="2">High</SelectItem>
+                        </Select>
+                      )}
+                    </Field>
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    color="danger"
+                    variant="light"
+                    onPress={onClose}
+                    isDisabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    color="primary"
+                    type="submit"
+                    isLoading={isSubmitting}
+                    isDisabled={!isValid || !dirty}
+                  >
+                    {isSubmitting ? "Updating..." : "Update Task"}
+                  </Button>
+                </ModalFooter>
+              </Form>
+            )}
+          </Formik>
+        )}
+      </ModalContent>
+    </Modal>
+  );
+}
+
+export default UpdateTaskModal;
