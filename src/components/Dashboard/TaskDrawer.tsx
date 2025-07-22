@@ -20,6 +20,7 @@ import { getPriorityColor, getPriorityLabel } from "@/utils/uiTools";
 import { toast } from "react-toastify";
 import { MdModeEditOutline } from "react-icons/md";
 import UpdateTaskModal from "./UpdateTaskModal";
+import AddDeadlineModal from "./AddDeadlineModal";
 
 function TaskDrawer({
   isOpen,
@@ -39,6 +40,12 @@ function TaskDrawer({
     isOpen: isEditOpen,
     onOpen,
     onOpenChange: onEditChange,
+  } = useDisclosure();
+
+  const {
+    isOpen: isAddDeadlineOpen,
+    onOpen: onAddDeadlineOpen,
+    onOpenChange: onAddDeadlineChange,
   } = useDisclosure();
 
   useEffect(() => {
@@ -98,28 +105,63 @@ function TaskDrawer({
                     <div className="space-y-2">
                       <h3 className="font-medium text-gray-500 flex items-center justify-between">
                         <span>Description</span>
-                        <span onClick={onOpen} className="cursor-pointer">
-                          <MdModeEditOutline />
-                        </span>
+                        {task.creator.id == user?.id && (
+                          <span onClick={onOpen} className="cursor-pointer">
+                            <MdModeEditOutline />
+                          </span>
+                        )}
                       </h3>
                       <p className="text-gray-800">{task.description}</p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="flex gap-3 items-center">
+                      <div
+                        onClick={onAddDeadlineOpen}
+                        className={`flex gap-3 items-center group duration-150 ease-in-out p-2 rounded-lg ${
+                          task.creator.id == user?.id &&
+                          "hover:bg-gray-100 cursor-pointer"
+                        }`}
+                      >
                         <div className="flex-none border-1 border-default-200/50 rounded-small text-center w-11 overflow-hidden">
                           <div className="text-tiny bg-default-100 py-0.5 text-default-500">
-                            Nov
+                            {task.deadlines.length > 0
+                              ? format(
+                                  new Date(task.deadlines[0].dueDate),
+                                  "MMM"
+                                )
+                              : "---"}
                           </div>
-                          <div className="flex items-center justify-center font-semibold text-medium h-6 text-default-500">
-                            19
+                          <div
+                            className={`flex items-center justify-center font-semibold text-medium h-6 text-default-500 ${
+                              task.creator.id == user?.id &&
+                              "group-hover:hidden"
+                            }`}
+                          >
+                            {task.deadlines.length > 0
+                              ? format(new Date(task.deadlines[0].dueDate), "d")
+                              : "--"}
                           </div>
+                          {task.creator.id == user?.id && (
+                            <div className="items-center justify-center hidden group-hover:flex font-semibold text-medium h-6 text-default-500">
+                              <MdModeEditOutline />
+                            </div>
+                          )}
                         </div>
                         <div className="flex flex-col gap-0.5">
                           <p className="text-medium text-foreground font-medium">
-                            Tuesday, November 19
+                            {task.deadlines.length > 0
+                              ? format(
+                                  new Date(task.deadlines[0].dueDate),
+                                  "EEEE, MMMM d"
+                                )
+                              : "No deadline set"}
                           </p>
                           <p className="text-small text-default-500">
-                            5:00 PM - 9:00 PM PST
+                            {task.deadlines.length > 0
+                              ? format(
+                                  new Date(task.deadlines[0].dueDate),
+                                  "h:mm a zzz"
+                                )
+                              : "---"}
                           </p>
                         </div>
                       </div>
@@ -167,9 +209,9 @@ function TaskDrawer({
 
                     <div className="space-y-2">
                       <h3 className="font-medium text-gray-500">
-                        Deadlines Timeline
+                        Deadline Changes
                       </h3>
-                      <ol className="relative border-s border-gray-200">
+                      <ol className="relative border-s border-gray-200 flex flex-col gap-1">
                         {task.deadlines.map((deadline) => (
                           <li key={deadline.id} className="ms-4">
                             <div className="absolute w-3 h-3 bg-gray-200 rounded-full mt-1.5 -start-1.5 border-gray-200"></div>
@@ -178,11 +220,17 @@ function TaskDrawer({
                               <div>
                                 <p className="text-sm font-medium">
                                   Due:{" "}
-                                  {format(new Date(deadline.dueDate), "PPP")}
+                                  {format(
+                                    new Date(deadline.dueDate),
+                                    "PPP 'at' h:mm a"
+                                  )}
                                 </p>
                                 <p className="text-xs text-gray-500">
                                   Set on:{" "}
-                                  {format(new Date(deadline.createdAt), "PPP")}
+                                  {format(
+                                    new Date(deadline.createdAt),
+                                    "PPP 'at' h:mm a"
+                                  )}
                                 </p>
                               </div>
                             </div>
@@ -201,6 +249,10 @@ function TaskDrawer({
         </DrawerContent>
       </Drawer>
       <UpdateTaskModal isOpen={isEditOpen} onOpenChange={onEditChange} />
+      <AddDeadlineModal
+        isOpen={isAddDeadlineOpen}
+        onOpenChange={onAddDeadlineChange}
+      />
     </>
   );
 }

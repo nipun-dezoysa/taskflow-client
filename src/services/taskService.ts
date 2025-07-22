@@ -20,3 +20,7 @@ export const getUserAssignedTasks = async (userId: string) => {
 export const updateTaskStatus = async (taskId: number, status: TaskStatus) => {
   return axiosInstance.patch(`/task/${taskId}/status`, { status });
 };
+
+export const addDeadlineToTask = async (taskId: number, dueDate: string) => {
+  return axiosInstance.post(`/task/${taskId}/deadline`, { dueDate });
+};

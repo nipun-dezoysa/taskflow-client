@@ -54,7 +54,6 @@ function UpdateTaskModal({
   const [assigners, setAssigners] = useState<User[]>([]);
 
   const task = useDrawerStore((state) => state.task);
-  const user = useUserStore((state) => state.user);
   const updateTask = useDrawerStore((state) => state.updateTask);
 
   useEffect(() => {
@@ -103,7 +102,8 @@ function UpdateTaskModal({
       resetForm();
       onOpenChange(false);
     } catch (error) {
-      console.error("Error creating task:", error);
+      console.error("Error updating task:", error);
+      toast.error("Failed to update task");
     } finally {
       setIsSubmitting(false);
     }
