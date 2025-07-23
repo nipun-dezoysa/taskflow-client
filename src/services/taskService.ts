@@ -21,6 +21,10 @@ export const getUserCreatedTasks = async (userId: string) => {
   return axiosInstance.get(`/task/user/${userId}/created`);
 };
 
+export const getUserUpcomingTasks = async (userId: string) => {
+  return axiosInstance.get(`/task/user/${userId}/upcoming`);
+};
+
 export const updateTaskStatus = async (taskId: number, status: TaskStatus) => {
   return axiosInstance.patch(`/task/${taskId}/status`, { status });
 };

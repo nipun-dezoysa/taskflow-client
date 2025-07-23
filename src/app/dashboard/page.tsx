@@ -1,7 +1,7 @@
 "use client";
 import SummaryCards from "@/components/Dashboard/SummaryCards";
 import { SummaryCard, SummaryData } from "@/types/dashbord.type";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   FiCheckCircle,
   FiClock,
@@ -13,10 +13,33 @@ import {
 import { format } from "date-fns";
 import { useUserStore } from "@/store/userStore";
 import { UserRole } from "@/types/user.type";
+import { Task } from "@/types/task.type";
+import { getUserUpcomingTasks } from "@/services/taskService";
+import TaskColumn from "@/components/Dashboard/TaskColumn";
 
 const DashboardPage = () => {
   const user = useUserStore((state) => state.user);
   const dateString = format(new Date(), "EEEE, d MMMM yyyy");
+
+  const [allTasks, setAllTasks] = useState<Task[]>([]);
+
+  const updateTaskInList = useCallback((updatedTask: Task) => {
+    setAllTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      getUserUpcomingTasks(user.id)
+        .then((response) => {
+          setAllTasks(response.data.tasks);
+        })
+        .catch((error) => {
+          console.error("Error fetching user tasks:", error);
+        });
+    }
+  }, [user]);
 
   const summaryData: SummaryData = {
     totalTasks: 24,
@@ -98,6 +121,14 @@ const DashboardPage = () => {
         <p className="text-gray-600">it's {dateString}</p>
       </div>
       <SummaryCards summaryCards={summaryCards} />
+      <div>
+        <TaskColumn
+          title="Upcoming Deadlines"
+          tasks={allTasks}
+          bgColor="bg-gray-50"
+          updateTaskInList={updateTaskInList}
+        />
+      </div>
     </div>
   );
 };
