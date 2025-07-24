@@ -32,3 +32,7 @@ export const updateTaskStatus = async (taskId: number, status: TaskStatus) => {
 export const addDeadlineToTask = async (taskId: number, dueDate: string) => {
   return axiosInstance.post(`/task/${taskId}/deadline`, { dueDate });
 };
+
+export const getAllTasks = async () => {
+  return axiosInstance.get("/task");
+};

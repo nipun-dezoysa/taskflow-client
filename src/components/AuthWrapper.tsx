@@ -4,6 +4,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
 import { Spinner } from "@heroui/react";
 import { useEffect, useState } from "react";
+import LoadingPage from "./LoadingPage";
 
 export default function AuthWrapper({
   children,
@@ -31,11 +32,7 @@ export default function AuthWrapper({
   }, [token]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Spinner size="lg" color="primary" />
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   return <>{children}</>;
