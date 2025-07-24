@@ -106,10 +106,12 @@ function page() {
                   {format(new Date(task.createdAt), "PPP 'at' h:mm a")}
                 </TableCell>
                 <TableCell>
-                  {format(
-                    new Date(task.deadlines[0].dueDate),
-                    "PPP 'at' h:mm a"
-                  )}
+                  {task.deadlines.length > 0
+                    ? format(
+                        new Date(task.deadlines[0].dueDate),
+                        "PPP 'at' h:mm a"
+                      )
+                    : "No Deadline"}
                 </TableCell>
                 <TableCell>{task.status}</TableCell>
                 <TableCell>
