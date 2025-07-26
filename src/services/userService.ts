@@ -7,3 +7,7 @@ export const getUserDetails = async () => {
 export const getAllUsers = async () => {
   return axiosInstance.get("/user/all");
 };
+
+export const getAllUsersWithDetails = async () => {
+  return axiosInstance.get("/user/details");
+};

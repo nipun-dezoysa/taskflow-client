@@ -1,6 +1,6 @@
-import { SummaryCard } from '@/types/dashbord.type';
-import React from 'react'
-import { IconType } from 'react-icons';
+import { SummaryCard } from "@/types/dashbord.type";
+import React from "react";
+import { IconType } from "react-icons";
 
 function SummaryCards({ summaryCards }: { summaryCards: SummaryCard[] }) {
   return (
@@ -11,7 +11,7 @@ function SummaryCards({ summaryCards }: { summaryCards: SummaryCard[] }) {
         return (
           <div
             key={index}
-            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 p-6 border border-gray-200 cursor-pointer hover:scale-105"
+            className="bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-200 px-6 py-4 border border-gray-200 cursor-pointer hover:scale-105"
           >
             <div className="flex items-center justify-between">
               <div>
@@ -33,4 +33,4 @@ function SummaryCards({ summaryCards }: { summaryCards: SummaryCard[] }) {
   );
 }
 
-export default SummaryCards
+export default SummaryCards;
