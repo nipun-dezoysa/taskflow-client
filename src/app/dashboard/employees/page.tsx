@@ -2,7 +2,14 @@
 import SummaryCards from "@/components/Dashboard/SummaryCards";
 import { SummaryCard } from "@/types/dashbord.type";
 import React, { useEffect, useState } from "react";
-import { FiBarChart, FiCheckCircle } from "react-icons/fi";
+import {
+  FiBarChart,
+  FiCheckCircle,
+  FiEdit,
+  FiEye,
+  FiShield,
+  FiUsers,
+} from "react-icons/fi";
 import {
   Table,
   TableHeader,
@@ -44,9 +51,9 @@ const columns = [
 ];
 function page() {
   const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
-  const user = useUserStore((state) => state.user);
+  const currentUser = useUserStore((state) => state.user);
   useEffect(() => {
-    if (user) {
+    if (currentUser) {
       getAllUsersWithDetails()
         .then((response) => {
           setAllUsers(response.data.users);
@@ -55,19 +62,20 @@ function page() {
           console.error("Error fetching user tasks:", error);
         });
     }
-  }, [user]);
+  }, [currentUser]);
   const baseCards: SummaryCard[] = [
     {
       title: "Total Employees",
-      value: 12,
-      icon: FiBarChart,
+      value: allUsers.length,
+      icon: FiUsers,
       color: "bg-blue-500",
       textColor: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
       title: "Active Employees",
-      value: 12,
+      value: allUsers.filter((user) => (user.status as any) === "ACTIVE")
+        .length,
       icon: FiCheckCircle,
       color: "bg-green-500",
       textColor: "text-green-600",
@@ -75,7 +83,8 @@ function page() {
     },
     {
       title: "In-active Employees",
-      value: 12,
+      value: allUsers.filter((user) => (user.status as any) === "INACTIVE")
+        .length,
       icon: FiBarChart,
       color: "bg-yellow-500",
       textColor: "text-yellow-600",
@@ -83,8 +92,9 @@ function page() {
     },
     {
       title: "Suspended",
-      value: 12,
-      icon: FiBarChart,
+      value: allUsers.filter((user) => (user.status as any) === "SUSPENDED")
+        .length,
+      icon: FiShield,
       color: "bg-red-500",
       textColor: "text-red-600",
       bgColor: "bg-red-50",
@@ -125,17 +135,98 @@ function page() {
                     <div>
                       <p className="font-medium text-sm">
                         {user.fname} {user.lname}{" "}
-                        {user?.id === user.id ? "(You)" : ""}
+                        {currentUser?.id === user.id ? "(You)" : ""}
                       </p>
                       <p className="text-xs text-gray-500">{user.email}</p>
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>test</TableCell>
-                <TableCell>test</TableCell>
-                <TableCell>test</TableCell>
-                <TableCell>test</TableCell>
-                <TableCell>test</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {user.role === "MANAGER" ? (
+                      <FiShield className="text-blue-500" size={16} />
+                    ) : (
+                      <FiUsers className="text-green-500" size={16} />
+                    )}
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        user.role === "MANAGER"
+                          ? "bg-blue-100 text-blue-800"
+                          : "bg-green-100 text-green-800"
+                      }`}
+                    >
+                      {user.role}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      (user.status as any) === "ACTIVE"
+                        ? "bg-green-100 text-green-800"
+                        : (user.status as any) === "INACTIVE"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {String(user.status)}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm">
+                    <div className="text-gray-900 font-medium">
+                      {new Date(user.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(user.createdAt).toLocaleDateString("en-US", {
+                        weekday: "short",
+                      })}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="text-sm">
+                    <div className="text-gray-900 font-medium">
+                      {new Date(user.lastLogin).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {new Date(user.lastLogin).toLocaleTimeString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="p-1 hover:bg-blue-50 rounded-md transition-colors"
+                      title="View Profile"
+                    >
+                      <FiEye className="text-blue-500" size={16} />
+                    </button>
+                    <button
+                      className="p-1 hover:bg-green-50 rounded-md transition-colors"
+                      title="Edit Employee"
+                    >
+                      <FiEdit className="text-green-500" size={16} />
+                    </button>
+                    <button
+                      className="p-1 hover:bg-orange-50 rounded-md transition-colors"
+                      title="Manage Permissions"
+                    >
+                      <FiShield className="text-orange-500" size={16} />
+                    </button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
