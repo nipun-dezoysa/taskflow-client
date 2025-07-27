@@ -23,10 +23,12 @@ import {
   Input,
   Select,
   SelectItem,
+  useDisclosure,
 } from "@heroui/react";
 import { UserProfile } from "@/types/user.type";
 import { useUserStore } from "@/store/userStore";
 import { getAllUsersWithDetails } from "@/services/userService";
+import UserStatusModal from "@/components/Dashboard/UserStatusModal";
 
 const columns = [
   {
@@ -61,6 +63,9 @@ function page() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const currentUser = useUserStore((state) => state.user);
+
+  const { isOpen, onOpenChange, onOpen } = useDisclosure();
+  const [selectedUser, setSelectedUser] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     if (currentUser) {
@@ -126,6 +131,11 @@ function page() {
   ];
   return (
     <div className="space-y-6">
+      <UserStatusModal
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        selectedUser={selectedUser}
+      />
       <div>
         <h1 className="font-semibold text-2xl text-gray-900">
           Manage Employees
@@ -251,6 +261,10 @@ function page() {
                 <TableRow
                   key={user.id}
                   className="cursor-pointer hover:bg-gray-100"
+                  onClick={() => {
+                    setSelectedUser(user);
+                    onOpen();
+                  }}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">

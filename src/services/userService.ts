@@ -1,3 +1,4 @@
+import { UserStatus } from "@/types/user.type";
 import axiosInstance from "@/utils/axiosInstance";
 
 export const getUserDetails = async () => {
@@ -10,4 +11,8 @@ export const getAllUsers = async () => {
 
 export const getAllUsersWithDetails = async () => {
   return axiosInstance.get("/user/details");
+};
+
+export const updateUserStatus = async (userId: string, status: UserStatus) => {
+  return axiosInstance.put(`/user/${userId}/status`, { status });
 };

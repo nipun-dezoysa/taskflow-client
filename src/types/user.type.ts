@@ -12,7 +12,7 @@ export type UserProfile = {
   lname: string;
   email: string;
   role: UserRole;
-  status: UserState;
+  status: UserStatus;
   createdAt: string;
   lastLogin: string;
 };
