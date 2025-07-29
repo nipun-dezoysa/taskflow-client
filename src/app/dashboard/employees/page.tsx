@@ -135,6 +135,12 @@ function page() {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         selectedUser={selectedUser}
+        onUserStatusChange={(user) => {
+          setSelectedUser(user);
+          setAllUsers((prev) =>
+            prev.map((u) => (u.id === user.id ? user : u))
+          );
+        }}
       />
       <div>
         <h1 className="font-semibold text-2xl text-gray-900">
@@ -261,10 +267,6 @@ function page() {
                 <TableRow
                   key={user.id}
                   className="cursor-pointer hover:bg-gray-100"
-                  onClick={() => {
-                    setSelectedUser(user);
-                    onOpen();
-                  }}
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -354,14 +356,12 @@ function page() {
                         <FiEye className="text-blue-500" size={16} />
                       </button>
                       <button
-                        className="p-1 hover:bg-green-50 rounded-md transition-colors"
-                        title="Edit Employee"
-                      >
-                        <FiEdit className="text-green-500" size={16} />
-                      </button>
-                      <button
                         className="p-1 hover:bg-orange-50 rounded-md transition-colors"
                         title="Manage Permissions"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          onOpen();
+                        }}
                       >
                         <FiShield className="text-orange-500" size={16} />
                       </button>

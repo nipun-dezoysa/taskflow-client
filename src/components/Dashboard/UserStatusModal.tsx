@@ -21,10 +21,12 @@ function UserStatusModal({
   isOpen,
   onOpenChange,
   selectedUser,
+  onUserStatusChange,
 }: {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   selectedUser: UserProfile | null;
+  onUserStatusChange: (user: UserProfile) => void;
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,6 +40,13 @@ function UserStatusModal({
           : UserStatus.ACTIVE
       )
         .then(() => {
+          onUserStatusChange({
+            ...selectedUser,
+            status:
+              selectedUser.status === UserStatus.ACTIVE
+                ? UserStatus.SUSPENDED
+                : UserStatus.ACTIVE,
+          });
           toast.success("User status updated successfully!");
         })
         .catch((error) => {
