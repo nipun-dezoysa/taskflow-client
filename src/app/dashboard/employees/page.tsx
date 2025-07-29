@@ -11,6 +11,9 @@ import {
   FiShield,
   FiUsers,
   FiFilter,
+  FiMoreVertical,
+  FiUserCheck,
+  FiUserX,
 } from "react-icons/fi";
 import {
   Table,
@@ -24,11 +27,18 @@ import {
   Select,
   SelectItem,
   useDisclosure,
+  Button,
+  Link,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@heroui/react";
 import { UserProfile } from "@/types/user.type";
 import { useUserStore } from "@/store/userStore";
 import { getAllUsersWithDetails } from "@/services/userService";
 import UserStatusModal from "@/components/Dashboard/UserStatusModal";
+import { UserStatus } from "@/types/user.type";
 
 const columns = [
   {
@@ -137,9 +147,7 @@ function page() {
         selectedUser={selectedUser}
         onUserStatusChange={(user) => {
           setSelectedUser(user);
-          setAllUsers((prev) =>
-            prev.map((u) => (u.id === user.id ? user : u))
-          );
+          setAllUsers((prev) => prev.map((u) => (u.id === user.id ? user : u)));
         }}
       />
       <div>
@@ -266,7 +274,6 @@ function page() {
               filteredUsers.map((user) => (
                 <TableRow
                   key={user.id}
-                  className="cursor-pointer hover:bg-gray-100"
                 >
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -348,24 +355,68 @@ function page() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <button
-                        className="p-1 hover:bg-blue-50 rounded-md transition-colors"
-                        title="View Profile"
-                      >
-                        <FiEye className="text-blue-500" size={16} />
-                      </button>
-                      <button
-                        className="p-1 hover:bg-orange-50 rounded-md transition-colors"
-                        title="Manage Permissions"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          onOpen();
-                        }}
-                      >
-                        <FiShield className="text-orange-500" size={16} />
-                      </button>
-                    </div>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          className="text-gray-500 hover:text-gray-700"
+                        >
+                          <FiMoreVertical size={16} />
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu aria-label="User actions">
+                        <DropdownItem
+                          key="view"
+                          startContent={
+                            <FiEye className="text-blue-500" size={16} />
+                          }
+                          as={Link}
+                          href={`/dashboard/employees/${user.id}`}
+                        >
+                          View Profile
+                        </DropdownItem>
+                        <DropdownItem
+                          key="permissions"
+                          startContent={
+                            <FiShield className="text-orange-500" size={16} />
+                          }
+                          onPress={() => {
+                            // Handle permissions action
+                            console.log("Manage permissions for", user.id);
+                          }}
+                        >
+                          Manage Permissions
+                        </DropdownItem>
+                        <DropdownItem
+                          key="status"
+                          startContent={
+                            user.status === UserStatus.ACTIVE ? (
+                              <FiUserX className="text-red-500" size={16} />
+                            ) : (
+                              <FiUserCheck
+                                className="text-green-500"
+                                size={16}
+                              />
+                            )
+                          }
+                          className={
+                            user.status === UserStatus.ACTIVE
+                              ? "text-red-600"
+                              : "text-green-600"
+                          }
+                          onPress={() => {
+                            setSelectedUser(user);
+                            onOpen();
+                          }}
+                        >
+                          {user.status === UserStatus.ACTIVE
+                            ? "Suspend User"
+                            : "Activate User"}
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
                   </TableCell>
                 </TableRow>
               ))
