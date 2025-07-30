@@ -34,7 +34,7 @@ export default function RootLayout({
       >
         <Providers>
           <AuthWrapper>
-            <div className="flex flex-col min-h-screen">
+            <div className="flex flex-col min-h-screen h-full">
               <AppNavbar />
               {children}
             </div>

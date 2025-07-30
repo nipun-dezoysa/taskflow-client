@@ -16,3 +16,7 @@ export const getAllUsersWithDetails = async () => {
 export const updateUserStatus = async (userId: string, status: UserStatus) => {
   return axiosInstance.put(`/user/${userId}/status`, { status });
 };
+
+export const getUserById = async (userId: number) => {
+  return axiosInstance.get(`/user/${userId}`);
+};
