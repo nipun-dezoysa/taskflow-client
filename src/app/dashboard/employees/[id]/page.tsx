@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams } from "next/navigation";
 import {
   Card,
@@ -36,6 +36,7 @@ import { Task } from "@/types/task.type";
 import LoadingPage from "@/components/LoadingPage";
 import { useUserStore } from "@/store/userStore";
 import UserDetailCard from "@/components/Dashboard/UserDetailCard";
+import { useDrawerStore } from "@/store/drawerStore";
 
 const mockStats = {
   totalTasksAssigned: 15,
@@ -52,9 +53,37 @@ function page() {
   const [userData, setUserData] = useState<UserProfile | null>(null);
   const [assignedTasks, setAssignedTasks] = useState<Task[]>([]);
   const [createdTasks, setCreatedTasks] = useState<Task[]>([]);
-  const [stats, setStats] = useState(mockStats);
   const [selectedTab, setSelectedTab] = useState("assigned");
-  const user = useUserStore((state) => state.user);
+  const { onOpen } = useDrawerStore();
+  
+  const stats = useMemo(() => {
+    const total = assignedTasks.length;
+    const completed = assignedTasks.filter(
+      (task) => task.status === "COMPLETED"
+    ).length;
+    const inProgress = assignedTasks.filter(
+      (task) => task.status === "IN_PROGRESS"
+    ).length;
+    const pending = assignedTasks.filter(
+      (task) => task.status === "PENDING"
+    ).length;
+
+    return {
+      totalTasksAssigned: total,
+      completedTasks: completed,
+      inProgressTasks: inProgress,
+      pendingTasks: pending,
+    };
+  }, [assignedTasks]);
+
+  const updateLists = useCallback((updatedTask: Task) => {
+      setAssignedTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+      );
+      setCreatedTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+      );
+    }, []);
 
   useEffect(() => {
     getUserById(+userId)
@@ -271,7 +300,7 @@ function page() {
                           <div>
                             <p className="text-sm text-gray-600">To Do</p>
                             <p className="text-xl font-semibold">
-                              {stats.todo}
+                              {stats.pendingTasks}
                             </p>
                           </div>
                         </div>
@@ -291,7 +320,9 @@ function page() {
                           </span>
                         </div>
                         <Progress
-                          value={stats.completedTasks / stats.totalTasksAssigned}
+                          value={
+                            stats.completedTasks / stats.totalTasksAssigned
+                          }
                           color="primary"
                           size="sm"
                         />
@@ -309,7 +340,10 @@ function page() {
                     </TableHeader>
                     <TableBody>
                       {assignedTasks.map((task) => (
-                        <TableRow key={task.id}>
+                        <TableRow
+                          key={task.id}
+                          onClick={() => onOpen(task, updateLists)}
+                        >
                           <TableCell>
                             <p className="font-medium">{task.title}</p>
                           </TableCell>
@@ -373,7 +407,10 @@ function page() {
                   </TableHeader>
                   <TableBody>
                     {assignedTasks.map((task) => (
-                      <TableRow key={task.id}>
+                      <TableRow
+                        key={task.id}
+                        onClick={() => onOpen(task, updateLists)}
+                      >
                         <TableCell>
                           <p className="font-medium">{task.title}</p>
                         </TableCell>
