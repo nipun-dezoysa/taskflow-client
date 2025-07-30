@@ -321,7 +321,11 @@ function page() {
                         </div>
                         <Progress
                           value={
-                            stats.completedTasks / stats.totalTasksAssigned
+                            stats.totalTasksAssigned === 0
+                              ? 0
+                              : (stats.completedTasks /
+                                  stats.totalTasksAssigned) *
+                                100
                           }
                           color="primary"
                           size="sm"
@@ -343,6 +347,7 @@ function page() {
                         <TableRow
                           key={task.id}
                           onClick={() => onOpen(task, updateLists)}
+                          className="cursor-pointer hover:bg-gray-100"
                         >
                           <TableCell>
                             <p className="font-medium">{task.title}</p>
@@ -410,6 +415,7 @@ function page() {
                       <TableRow
                         key={task.id}
                         onClick={() => onOpen(task, updateLists)}
+                        className="cursor-pointer hover:bg-gray-100"
                       >
                         <TableCell>
                           <p className="font-medium">{task.title}</p>
