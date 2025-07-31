@@ -9,10 +9,10 @@ export interface SummaryCard {
 }
 
 export interface SummaryData {
-  totalTasks: number;
-  completedTasks: number;
-  pendingTasks: number;
-  overdueTasks: number;
-  teamMembers: number;
-  todayTasks: number;
+  assignedTasksCount: number;
+  completedTasksCount: number;
+  pendingTasksCount: number;
+  inProgressTasksCount: number;
+  overdueTasksCount: number;
+  teamCount: number;
 }

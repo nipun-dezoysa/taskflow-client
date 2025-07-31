@@ -16,12 +16,21 @@ import { UserRole } from "@/types/user.type";
 import { Task } from "@/types/task.type";
 import { getUserUpcomingTasks } from "@/services/taskService";
 import TaskColumn from "@/components/Dashboard/TaskColumn";
+import { getDashboardData } from "@/services/dashboardService";
 
 const DashboardPage = () => {
   const user = useUserStore((state) => state.user);
   const dateString = format(new Date(), "EEEE, d MMMM yyyy");
 
   const [allTasks, setAllTasks] = useState<Task[]>([]);
+  const [summaryData, setSummaryData] = useState<SummaryData>({
+    assignedTasksCount: 0,
+    completedTasksCount: 0,
+    pendingTasksCount: 0,
+    overdueTasksCount: 0,
+    teamCount: 0,
+    inProgressTasksCount: 0,
+  });
 
   const updateTaskInList = useCallback((updatedTask: Task) => {
     setAllTasks((prevTasks) =>
@@ -38,23 +47,22 @@ const DashboardPage = () => {
         .catch((error) => {
           console.error("Error fetching user tasks:", error);
         });
+
+      getDashboardData()
+        .then((response) => {
+          setSummaryData(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching dashboard data:", error);
+        });
     }
   }, [user]);
-
-  const summaryData: SummaryData = {
-    totalTasks: 24,
-    completedTasks: 18,
-    pendingTasks: 4,
-    overdueTasks: 2,
-    teamMembers: 8,
-    todayTasks: 6,
-  };
 
   const getCardsForRole = (): SummaryCard[] => {
     const baseCards: SummaryCard[] = [
       {
         title: "Total Tasks",
-        value: summaryData.totalTasks,
+        value: summaryData.assignedTasksCount,
         icon: FiBarChart,
         color: "bg-blue-500",
         textColor: "text-blue-600",
@@ -62,7 +70,7 @@ const DashboardPage = () => {
       },
       {
         title: "Completed",
-        value: summaryData.completedTasks,
+        value: summaryData.completedTasksCount,
         icon: FiCheckCircle,
         color: "bg-green-500",
         textColor: "text-green-600",
@@ -70,15 +78,23 @@ const DashboardPage = () => {
       },
       {
         title: "In Progress",
-        value: summaryData.pendingTasks,
+        value: summaryData.inProgressTasksCount,
         icon: FiClock,
         color: "bg-yellow-500",
         textColor: "text-yellow-600",
         bgColor: "bg-yellow-50",
       },
       {
+        title: "Todo",
+        value: summaryData.pendingTasksCount,
+        icon: FiPlus,
+        color: "bg-indigo-500",
+        textColor: "text-indigo-600",
+        bgColor: "bg-indigo-50",
+      },
+      {
         title: "Overdue",
-        value: summaryData.overdueTasks,
+        value: summaryData.overdueTasksCount,
         icon: FiAlertTriangle,
         color: "bg-red-500",
         textColor: "text-red-600",
@@ -89,19 +105,11 @@ const DashboardPage = () => {
     const managerCards: SummaryCard[] = [
       {
         title: "Team Members",
-        value: summaryData.teamMembers,
+        value: summaryData.teamCount,
         icon: FiUsers,
         color: "bg-purple-500",
         textColor: "text-purple-600",
         bgColor: "bg-purple-50",
-      },
-      {
-        title: "Today's Tasks",
-        value: summaryData.todayTasks,
-        icon: FiPlus,
-        color: "bg-indigo-500",
-        textColor: "text-indigo-600",
-        bgColor: "bg-indigo-50",
       },
     ];
 
