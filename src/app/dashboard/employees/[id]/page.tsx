@@ -16,7 +16,6 @@ import {
   TableCell,
   Tabs,
   Tab,
-  Link,
 } from "@heroui/react";
 import {
   FiMail,
@@ -25,27 +24,15 @@ import {
   FiCheckCircle,
   FiClock as FiPending,
   FiTarget,
-  FiUsers,
   FiFileText,
   FiAward,
-  FiEye,
 } from "react-icons/fi";
 import { UserProfile, UserStatus, UserRole } from "@/types/user.type";
 import { getUserById } from "@/services/userService";
 import { Task } from "@/types/task.type";
 import LoadingPage from "@/components/LoadingPage";
-import { useUserStore } from "@/store/userStore";
 import UserDetailCard from "@/components/Dashboard/UserDetailCard";
 import { useDrawerStore } from "@/store/drawerStore";
-
-const mockStats = {
-  totalTasksAssigned: 15,
-  completedTasks: 12,
-  pendingTasks: 2,
-  inProgressTasks: 1,
-  averageCompletionTime: "3.2 days",
-  todo: 12,
-};
 
 function page() {
   const params = useParams();
@@ -55,7 +42,10 @@ function page() {
   const [createdTasks, setCreatedTasks] = useState<Task[]>([]);
   const [selectedTab, setSelectedTab] = useState("assigned");
   const { onOpen } = useDrawerStore();
-  
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const stats = useMemo(() => {
     const total = assignedTasks.length;
     const completed = assignedTasks.filter(
@@ -77,23 +67,38 @@ function page() {
   }, [assignedTasks]);
 
   const updateLists = useCallback((updatedTask: Task) => {
-      setAssignedTasks((prevTasks) =>
-        prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-      );
-      setCreatedTasks((prevTasks) =>
-        prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
-      );
-    }, []);
+    setAssignedTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+    setCreatedTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
+    );
+  }, []);
 
   useEffect(() => {
+    setLoading(true);
+    setError(null);
+
     getUserById(+userId)
       .then((response) => {
-        setUserData(response.data.user);
-        setAssignedTasks(response.data.assignedTasks);
-        setCreatedTasks(response.data.createdTasks);
+        if (response?.data?.user) {
+          setUserData(response.data.user);
+          setAssignedTasks(response.data.assignedTasks);
+          setCreatedTasks(response.data.createdTasks);
+        } else {
+          setError("User not found.");
+        }
       })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
+      .catch((err) => {
+        console.error("Error fetching user data:", err);
+        if (err.response && err.response.status === 404) {
+          setError("User not found.");
+        } else if (err.response && err.response.status === 500) {
+          setError("Internal server error. Please try again later.");
+        }
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [userId]);
 
@@ -146,8 +151,16 @@ function page() {
     });
   };
 
-  if (!userData) {
+  if (loading) {
     return <LoadingPage />;
+  }
+
+  if (error || !userData) {
+    return (
+      <div className="w-full h-96 flex items-center justify-center text-gray-500 text-lg">
+        {error || "User not found."}
+      </div>
+    );
   }
 
   return (
@@ -162,7 +175,7 @@ function page() {
               />
               <div className="flex flex-col space-y-1">
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
+                  <h1 className="text-xl font-bold text-gray-900">
                     {userData.fname} {userData.lname}
                   </h1>
                 </div>
