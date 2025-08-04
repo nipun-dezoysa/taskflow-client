@@ -54,20 +54,21 @@ function TaskDrawer({
     }
   }, [task]);
 
-  const onSelectChange = (keys: any) => {
+  const onSelectChange = (
+    keys: "all" | (Set<React.Key> & { anchorKey?: string; currentKey?: string })
+  ) => {
     let selectedKey: string | undefined;
-    if (typeof keys === "string") {
-      selectedKey = keys;
+    if (keys === "all") {
+      return;
     } else if (keys && typeof keys === "object" && "currentKey" in keys) {
-      selectedKey = keys.currentKey;
+      selectedKey = keys.currentKey as string;
+    } else if (keys instanceof Set) {
+      selectedKey = Array.from(keys)[0] as string;
     }
     if (!selectedKey) return;
     setSelectedStatus(selectedKey as TaskStatus);
     if (task) {
-      updateTaskStatus(
-        task.id,
-        selectedKey as TaskStatus
-      )
+      updateTaskStatus(task.id, selectedKey as TaskStatus)
         .then(() => {
           const updatedTask = {
             ...task,

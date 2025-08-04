@@ -4,13 +4,25 @@ import { Input } from "@heroui/react";
 const regex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
 
+interface PasswordInputProps {
+  lable: string;
+  value: string;
+  setState: (value: string) => void;
+  validate?: (value: string) => true | string;
+  className?: string;
+  isInvalid?: boolean;
+  errorMessage?: string | undefined | boolean;
+}
+
 export default function PasswordInput({
   lable,
   value,
   setState,
   validate,
   className,
-}: any) {
+  isInvalid,
+  errorMessage,
+}: PasswordInputProps) {
   const [passVisible, setPassVisible] = useState(false);
   return (
     <Input
@@ -29,6 +41,8 @@ export default function PasswordInput({
           ? "Require minimum 8-15 characters, with at least one uppercase, lowercase, number, and special character."
           : true
       }
+      isInvalid={isInvalid}
+      errorMessage={errorMessage}
       endContent={
         <button
           className="focus:outline-none cursor-pointer"

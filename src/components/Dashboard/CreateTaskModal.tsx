@@ -15,7 +15,7 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FieldInputProps } from "formik";
 import * as Yup from "yup";
 import {
   CalendarDateTime,
@@ -123,7 +123,7 @@ function CreateTaskModal({
                 </ModalHeader>
                 <ModalBody className="gap-4">
                   <Field name="title">
-                    {({ field }: { field: any }) => (
+                    {({ field }: { field: FieldInputProps<string> }) => (
                       <Input
                         {...field}
                         label="Task Title"
@@ -137,7 +137,7 @@ function CreateTaskModal({
                   </Field>
 
                   <Field name="description">
-                    {({ field }: { field: any }) => (
+                    {({ field }: { field: FieldInputProps<string> }) => (
                       <Textarea
                         {...field}
                         label="Task Description"

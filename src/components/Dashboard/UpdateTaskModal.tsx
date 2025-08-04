@@ -14,7 +14,7 @@ import {
   Select,
   SelectItem,
 } from "@heroui/react";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FieldProps, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { User } from "@/types/user.type";
 import { getAllUsers } from "@/services/userService";
@@ -71,11 +71,13 @@ function UpdateTaskModal({
     priority: task?.priority || 0,
   };
 
-  const handleSubmit = async (values: TaskFormValues, { resetForm }: any) => {
+  const handleSubmit = async (
+    values: TaskFormValues,
+    { resetForm }: FormikHelpers<TaskFormValues>
+  ) => {
     setIsSubmitting(true);
 
     try {
-      console.log(values);
       if (task) {
         const updatedTask = {
           ...task,
@@ -88,15 +90,12 @@ function UpdateTaskModal({
           updatedAt: new Date().toISOString(),
         };
         updateTask(updatedTask);
-        const response = await updateApiTask(task.id, {
+        await updateApiTask(task.id, {
           title: values.title,
           description: values.description,
           assigneeId: parseInt(values.assignedUserId, 10),
           priority: values.priority,
         });
-        console.log(updatedTask);
-        
-        console.log("Task updated:", response.data);
         toast.success("Task updated successfully");
       }
 
@@ -132,7 +131,7 @@ function UpdateTaskModal({
                 </ModalHeader>
                 <ModalBody className="gap-4">
                   <Field name="title">
-                    {({ field }: any) => (
+                    {({ field }: FieldProps) => (
                       <Input
                         {...field}
                         label="Task Title"
@@ -146,7 +145,7 @@ function UpdateTaskModal({
                   </Field>
 
                   <Field name="description">
-                    {({ field }: any) => (
+                    {({ field }: FieldProps) => (
                       <Textarea
                         {...field}
                         label="Task Description"
@@ -163,7 +162,7 @@ function UpdateTaskModal({
 
                   <div className="flex flex-col gap-4 md:flex-row">
                     <Field name="assignedUserId">
-                      {({ field, meta }: any) => (
+                      {() => (
                         <Autocomplete
                           label="Assign to User"
                           placeholder="Search and select a user"
@@ -207,7 +206,7 @@ function UpdateTaskModal({
                       )}
                     </Field>
                     <Field name="priority">
-                      {({ field, meta }: any) => (
+                      {() => (
                         <Select
                           label="Priority"
                           variant="bordered"
