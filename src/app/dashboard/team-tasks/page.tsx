@@ -7,7 +7,7 @@ import { Task } from "@/types/task.type";
 import { UserRole } from "@/types/user.type";
 import React, { useEffect, useState } from "react";
 
-function page() {
+function Page() {
   const user = useUserStore((state) => state.user);
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [isAunthorized, setIsAuthorized] = useState(true);
@@ -37,4 +37,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

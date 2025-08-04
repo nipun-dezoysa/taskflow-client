@@ -32,7 +32,7 @@ const validationSchema = Yup.object({
     .required("Confirm password is required"),
 });
 
-function page() {
+function Page() {
   const initialValues: FormValues = {
     fname: "",
     lname: "",
@@ -169,4 +169,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

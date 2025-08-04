@@ -5,7 +5,6 @@ import React, { useEffect, useState, useRef } from "react";
 import {
   FiBarChart,
   FiCheckCircle,
-  FiEdit,
   FiEye,
   FiSearch,
   FiShield,
@@ -66,7 +65,7 @@ const columns = [
     label: "ACTIONS",
   },
 ];
-function page() {
+function Page() {
   const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -97,7 +96,7 @@ function page() {
 
     const matchesRole = roleFilter === "all" || user.role === roleFilter;
     const matchesStatus =
-      statusFilter === "all" || (user.status as any) === statusFilter;
+      statusFilter === "all" || (user.status as UserStatus) === statusFilter;
 
     return matchesSearch && matchesRole && matchesStatus;
   });
@@ -113,7 +112,7 @@ function page() {
     },
     {
       title: "Active Employees",
-      value: allUsers.filter((user) => (user.status as any) === "ACTIVE")
+      value: allUsers.filter((user) => (user.status as UserStatus) === "ACTIVE")
         .length,
       icon: FiCheckCircle,
       color: "bg-green-500",
@@ -122,8 +121,9 @@ function page() {
     },
     {
       title: "In-active Employees",
-      value: allUsers.filter((user) => (user.status as any) === "INACTIVE")
-        .length,
+      value: allUsers.filter(
+        (user) => (user.status as UserStatus) === "INACTIVE"
+      ).length,
       icon: FiBarChart,
       color: "bg-yellow-500",
       textColor: "text-yellow-600",
@@ -131,8 +131,9 @@ function page() {
     },
     {
       title: "Suspended",
-      value: allUsers.filter((user) => (user.status as any) === "SUSPENDED")
-        .length,
+      value: allUsers.filter(
+        (user) => (user.status as UserStatus) === "SUSPENDED"
+      ).length,
       icon: FiShield,
       color: "bg-red-500",
       textColor: "text-red-600",
@@ -272,9 +273,7 @@ function page() {
               </TableRow>
             ) : (
               filteredUsers.map((user) => (
-                <TableRow
-                  key={user.id}
-                >
+                <TableRow key={user.id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar
@@ -311,9 +310,9 @@ function page() {
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        (user.status as any) === "ACTIVE"
+                        (user.status as UserStatus) === "ACTIVE"
                           ? "bg-green-100 text-green-800"
-                          : (user.status as any) === "INACTIVE"
+                          : (user.status as UserStatus) === "INACTIVE"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-red-100 text-red-800"
                       }`}
@@ -428,4 +427,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

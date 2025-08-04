@@ -1,6 +1,6 @@
 "use client";
 import PasswordInput from "@/components/PasswordInput";
-import { Button, Input, Link, useUser } from "@heroui/react";
+import { Button, Input, Link } from "@heroui/react";
 import React from "react";
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
@@ -25,7 +25,7 @@ const validationSchema = Yup.object({
     .required("Password is required"),
 });
 
-function page() {
+function Page() {
   const initialValues: FormValues = {
     email: "",
     password: "",
@@ -121,4 +121,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

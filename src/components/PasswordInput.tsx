@@ -1,7 +1,7 @@
 import { HiEyeSlash, HiMiniEye } from "react-icons/hi2";
 import { useState } from "react";
 import { Input } from "@heroui/react";
-let regex =
+const regex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]{8,15}$/;
 
 export default function PasswordInput({

@@ -16,8 +16,8 @@ function Unauthorized() {
           Access Denied
         </h2>
         <p className="mt-2 text-sm text-gray-600">
-          You don't have permission to access this page. Please contact your
-          administrator if you believe this is a mistake.
+          You don&apos;t have permission to access this page. Please contact
+          your administrator if you believe this is a mistake.
         </p>
         <div className="mt-6">
           <Button

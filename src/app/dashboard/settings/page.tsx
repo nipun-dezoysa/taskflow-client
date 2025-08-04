@@ -36,12 +36,12 @@ function SettingsPage() {
   const handleSave = () => {
     if (user) {
       updateUser(form)
-        .then((res) => {
+        .then(() => {
           setUser({ id: user.id, ...form, role: user.role });
           setEditMode(false);
           toast.success("Profile updated!");
         })
-        .catch((err) => {
+        .catch(() => {
           toast.error("Something went wrong while updating your profile.");
         });
     }

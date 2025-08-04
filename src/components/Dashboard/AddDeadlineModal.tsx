@@ -43,7 +43,10 @@ function AddDeadlineModal({
     deadline: null,
   };
 
-  const handleSubmit = async (values: TaskFormValues, { resetForm }: any) => {
+  const handleSubmit = async (
+    values: TaskFormValues,
+    { resetForm }: { resetForm: () => void }
+  ) => {
     setIsSubmitting(true);
 
     try {
@@ -75,14 +78,14 @@ function AddDeadlineModal({
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
-            {({ values, errors, touched, setFieldValue, isValid, dirty }) => (
+            {({ values, setFieldValue, isValid, dirty }) => (
               <Form>
                 <ModalHeader className="flex flex-col gap-1">
                   Add Deadline to Task
                 </ModalHeader>
                 <ModalBody className="gap-4">
                   <Field name="deadline">
-                    {({ field, meta }: any) => (
+                    {() => (
                       <DatePicker
                         label="Deadline (Optional)"
                         variant="bordered"

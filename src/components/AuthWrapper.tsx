@@ -2,7 +2,6 @@
 import { getUserDetails } from "@/services/userService";
 import { useAuthStore } from "@/store/authStore";
 import { useUserStore } from "@/store/userStore";
-import { Spinner } from "@heroui/react";
 import { useEffect, useState } from "react";
 import LoadingPage from "./LoadingPage";
 

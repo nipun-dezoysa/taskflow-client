@@ -19,7 +19,6 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import {
   CalendarDateTime,
-  parseDateTime,
   now,
   getLocalTimeZone,
 } from "@internationalized/date";
@@ -77,13 +76,16 @@ function CreateTaskModal({
     priority: 0,
   };
 
-  const handleSubmit = async (values: TaskFormValues, { resetForm }: any) => {
+  const handleSubmit = async (
+    values: TaskFormValues,
+    { resetForm }: { resetForm: () => void }
+  ) => {
     setIsSubmitting(true);
 
     try {
       console.log(values);
 
-      const response = await createTask({
+      await createTask({
         title: values.title,
         description: values.description,
         assigneeId: parseInt(values.assignedUserId, 10),
@@ -121,7 +123,7 @@ function CreateTaskModal({
                 </ModalHeader>
                 <ModalBody className="gap-4">
                   <Field name="title">
-                    {({ field }: any) => (
+                    {({ field }: { field: any }) => (
                       <Input
                         {...field}
                         label="Task Title"
@@ -135,7 +137,7 @@ function CreateTaskModal({
                   </Field>
 
                   <Field name="description">
-                    {({ field }: any) => (
+                    {({ field }: { field: any }) => (
                       <Textarea
                         {...field}
                         label="Task Description"
@@ -152,7 +154,7 @@ function CreateTaskModal({
 
                   <div className="flex flex-col gap-4 md:flex-row">
                     <Field name="assignedUserId">
-                      {({ field, meta }: any) => (
+                      {() => (
                         <Autocomplete
                           label="Assign to User"
                           placeholder="Search and select a user"
@@ -196,7 +198,7 @@ function CreateTaskModal({
                       )}
                     </Field>
                     <Field name="priority">
-                      {({ field, meta }: any) => (
+                      {() => (
                         <Select
                           label="Priority"
                           variant="bordered"
@@ -219,7 +221,7 @@ function CreateTaskModal({
                   </div>
 
                   <Field name="deadline">
-                    {({ field, meta }: any) => (
+                    {() => (
                       <DatePicker
                         label="Deadline (Optional)"
                         variant="bordered"

@@ -5,7 +5,6 @@ import {
   Card,
   CardBody,
   Avatar,
-  Button,
   Chip,
   Progress,
   Table,
@@ -34,7 +33,7 @@ import LoadingPage from "@/components/LoadingPage";
 import UserDetailCard from "@/components/Dashboard/UserDetailCard";
 import { useDrawerStore } from "@/store/drawerStore";
 
-function page() {
+function Page() {
   const params = useParams();
   const userId = params.id as string;
   const [userData, setUserData] = useState<UserProfile | null>(null);
@@ -479,4 +478,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

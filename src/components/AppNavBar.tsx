@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext } from "react";
+import React from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -19,12 +19,11 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { useSideBarStore } from "@/store/dashStore";
 
 function Header() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const user = useUserStore((state) => state.user);
   const setSidebarOpen = useSideBarStore((state) => state.setSidebarOpen);
   return (
     <>
-      <Navbar onMenuOpenChange={setIsMenuOpen} maxWidth="full" isBordered>
+      <Navbar maxWidth="full" isBordered>
         <NavbarContent>
           <div className="lg:hidden">
             <Button

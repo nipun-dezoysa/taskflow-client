@@ -5,7 +5,7 @@ import { useUserStore } from "@/store/userStore";
 import { Task } from "@/types/task.type";
 import React, { useEffect, useState } from "react";
 
-function page() {
+function Page() {
   const user = useUserStore((state) => state.user);
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   useEffect(() => {
@@ -22,4 +22,4 @@ function page() {
   return <TasksBoard allTasks={allTasks} setAllTasks={setAllTasks} />;
 }
 
-export default page;
+export default Page;

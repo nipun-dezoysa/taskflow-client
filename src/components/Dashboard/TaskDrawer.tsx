@@ -54,24 +54,31 @@ function TaskDrawer({
     }
   }, [task]);
 
-  const onSelectChange = async (keys: any) => {
-    const selectedKey = Array.from(keys as Set<string>)[0];
+  const onSelectChange = (keys: any) => {
+    let selectedKey: string | undefined;
+    if (typeof keys === "string") {
+      selectedKey = keys;
+    } else if (keys && typeof keys === "object" && "currentKey" in keys) {
+      selectedKey = keys.currentKey;
+    }
+    if (!selectedKey) return;
     setSelectedStatus(selectedKey as TaskStatus);
     if (task) {
-      try {
-        const response = await updateTaskStatus(
-          task.id,
-          selectedKey as TaskStatus
-        );
-        const updatedTask = {
-          ...task,
-          status: selectedKey as TaskStatus,
-          updatedAt: new Date().toISOString(),
-        };
-        updateTask(updatedTask);
-      } catch (error) {
-        toast.error("Failed to update task status");
-      }
+      updateTaskStatus(
+        task.id,
+        selectedKey as TaskStatus
+      )
+        .then(() => {
+          const updatedTask = {
+            ...task,
+            status: selectedKey as TaskStatus,
+            updatedAt: new Date().toISOString(),
+          };
+          updateTask(updatedTask);
+        })
+        .catch(() => {
+          toast.error("Failed to update task status");
+        });
     }
   };
 
@@ -79,7 +86,7 @@ function TaskDrawer({
     <>
       <Drawer isOpen={isOpen} onOpenChange={onOpenChange}>
         <DrawerContent>
-          {(onClose) => (
+          {() => (
             <>
               {task && (
                 <>

@@ -42,7 +42,7 @@ const columns = [
     label: "PRIORITY",
   },
 ];
-function page() {
+function Page() {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const user = useUserStore((state) => state.user);
   const { onOpen } = useDrawerStore();
@@ -132,4 +132,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

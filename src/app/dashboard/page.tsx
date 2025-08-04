@@ -126,7 +126,7 @@ const DashboardPage = () => {
         <h1 className="font-semibold text-2xl text-gray-900">
           Good Morning, {user?.fname || "User"}!
         </h1>
-        <p className="text-gray-600">it's {dateString}</p>
+        <p className="text-gray-600">it&apos;s {dateString}</p>
       </div>
       <SummaryCards summaryCards={summaryCards} />
       <div>

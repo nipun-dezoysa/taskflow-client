@@ -6,7 +6,6 @@ import { Button, Divider, Card, CardBody, useDisclosure } from "@heroui/react";
 import {
   AiOutlineHome,
   AiOutlineCheckSquare,
-  AiOutlinePlus,
   AiOutlineTeam,
   AiOutlineUserSwitch,
   AiOutlineBarChart,
