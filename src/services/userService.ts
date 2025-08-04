@@ -20,3 +20,7 @@ export const updateUserStatus = async (userId: string, status: UserStatus) => {
 export const getUserById = async (userId: number) => {
   return axiosInstance.get(`/user/${userId}`);
 };
+
+export const updateUser = async ({ fname, lname, email }: { fname: string; lname: string; email: string }) => {
+  return axiosInstance.put(`/user/`, { fname, lname, email });
+}

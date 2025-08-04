@@ -19,6 +19,8 @@ import { BiPlus } from "react-icons/bi";
 import CreateTaskModal from "./CreateTaskModal";
 import { useSideBarStore } from "@/store/dashStore";
 import { UserRole } from "@/types/user.type";
+import { useAuthStore } from "@/store/authStore";
+import { useUserStore } from "@/store/userStore";
 
 const iconMap = {
   Home: AiOutlineHome,
@@ -168,6 +170,10 @@ export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
                   color="danger"
                   className="w-full justify-start h-10 px-4"
                   startContent={<AiOutlineLogout className="w-4 h-4" />}
+                  onClick={() => {
+                    useAuthStore.getState().clearToken();
+                    useUserStore.getState().clearUser();
+                  }}
                 >
                   Logout
                 </Button>

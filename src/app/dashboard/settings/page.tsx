@@ -12,6 +12,7 @@ import {
 import { FiUser, FiMail, FiSave, FiEdit2 } from "react-icons/fi";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "react-toastify";
+import { updateUser } from "@/services/userService";
 
 function SettingsPage() {
   const user = useUserStore((state) => state.user);
@@ -33,10 +34,16 @@ function SettingsPage() {
   };
 
   const handleSave = () => {
-    if(user){
-        setUser({ id: user.id, ...form, role: user.role });
-        setEditMode(false);
-        toast.success("Profile updated!");
+    if (user) {
+      updateUser(form)
+        .then((res) => {
+          setUser({ id: user.id, ...form, role: user.role });
+          setEditMode(false);
+          toast.success("Profile updated!");
+        })
+        .catch((err) => {
+          toast.error("Something went wrong while updating your profile.");
+        });
     }
   };
 

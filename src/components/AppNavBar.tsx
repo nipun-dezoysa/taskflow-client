@@ -79,7 +79,9 @@ function Header() {
                   <p className="font-semibold">Signed in as</p>
                   <p className="font-semibold">{user.email}</p>
                 </DropdownItem>
-                <DropdownItem key="settings">My Settings</DropdownItem>
+                <DropdownItem href={`/dashboard/settings`} key="settings">
+                  My Settings
+                </DropdownItem>
                 <DropdownItem
                   onClick={() => {
                     useAuthStore.getState().clearToken();
