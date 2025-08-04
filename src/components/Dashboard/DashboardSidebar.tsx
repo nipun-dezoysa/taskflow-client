@@ -73,7 +73,7 @@ export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:static inset-y-0 left-0 max-md:z-50
+          fixed lg:static inset-y-0 left-0 max-lg:z-50
           w-64 bg-white shadow-lg
           transform transition-transform duration-300 ease-in-out
           ${
@@ -155,6 +155,8 @@ export default function DashboardSidebar({ userRole }: { userRole: UserRole }) {
               {/* Additional Actions */}
               <div className="space-y-2">
                 <Button
+                  as={Link}
+                  href="/dashboard/settings"
                   variant="light"
                   className="w-full justify-start h-10 px-4 text-gray-600"
                   startContent={<AiOutlineSetting className="w-4 h-4" />}
